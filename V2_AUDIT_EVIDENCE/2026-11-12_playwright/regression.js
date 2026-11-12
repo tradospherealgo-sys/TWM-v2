@@ -241,9 +241,12 @@ async function run() {
     // Conversion leaves the stage in Focus mode on the (now Converted) lead panel,
     // where every other panel — including the Leads|Customers tab bar — is
     // correctly non-interactive (pointer-events: none) by the Focus-mode dim rule.
-    // That's real app behaviour, not a bug, so re-navigate to reset to Overview
-    // mode (same H-1 route-change reset path used everywhere else) before
-    // continuing, rather than trying to click through the dimmed tab bar.
+    // That's real app behaviour, not a bug. page.goto to the SAME hash is a no-op
+    // (no hashchange fires), so route through a different destination first to
+    // force a real route-key change and reset focusState (same H-1 reset path
+    // used everywhere else), rather than trying to click through the dimmed tab bar.
+    await page.goto(`${BASE_URL}/index.html#/employee/myday`);
+    await page.waitForTimeout(200);
     await page.goto(`${BASE_URL}/index.html#/employee/crm`);
     await page.waitForTimeout(300);
     await page.locator('[data-tab="customers"]').click();

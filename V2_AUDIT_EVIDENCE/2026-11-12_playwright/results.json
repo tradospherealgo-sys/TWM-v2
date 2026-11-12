@@ -1,7 +1,7 @@
 {
-  "ranAt": "2026-11-12T10:13:15.893Z",
-  "total": 47,
-  "passed": 47,
+  "ranAt": "2026-11-12T10:26:55.858Z",
+  "total": 54,
+  "passed": 54,
   "failed": 0,
   "results": [
     {
@@ -206,6 +206,41 @@
     },
     {
       "name": "P5-35: Sales & CRM shows owner attribution",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-06b: My Day Calls to Make shows a real lead row",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-06b: clicking a Calls-to-Make lead deep-links to CRM lead detail in Immersive",
+      "pass": true,
+      "detail": "#/employee/crm/lead-detail-lead-1 :: twm-stage__grid twm-stage twm-stage--immersive"
+    },
+    {
+      "name": "P4-06b: My Day Follow-ups Due shows a real open task row",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-06b: My Day Applications Waiting shows a real non-Decision application row",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-20: CRM Customers tab shows at least one customer (converted lead)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-20: Customer detail shows masked document with Reveal control",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-20: Revealing a document shows Hide control (state toggled, not fabricated content)",
       "pass": true,
       "detail": ""
     },
