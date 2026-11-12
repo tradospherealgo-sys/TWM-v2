@@ -2,7 +2,9 @@
 
 One row per requirement ID assigned across all six phase audits. Full evidence (exact file:line, test command, test result, screenshot) lives in the linked phase report — this file is the index, not a replacement for it. Status values: **WORKING** / **NOT CONNECTED** / **PARTIAL** / **NOT IMPLEMENTED** / **UNVERIFIED**.
 
-**Updated 2026-11-12 (remediation session):** rows marked "resolved 2026-11-12" or "upgraded 2026-11-12" reflect code changes made this session, verified by static file:line re-inspection and `node --check` only — the live-browser Preview tool and Chrome-extension bridge were both unavailable this session, so none of these specific status changes have been re-confirmed by an actual click in a running browser. Original 2026-11-11 live-test evidence (cited inline where still applicable) remains valid for everything not marked as changed. See each phase file's own "POST-REMEDIATION UPDATE" section for full evidence.
+**Updated 2026-11-12 (remediation session):** rows marked "resolved 2026-11-12" or "upgraded 2026-11-12" reflect code changes made in the first remediation pass this session, verified by static file:line re-inspection and `node --check` only. Original 2026-11-11 live-test evidence (cited inline where still applicable) remains valid for everything not marked as changed. See each phase file's own "POST-REMEDIATION UPDATE" section for full evidence.
+
+**Updated again 2026-11-12 (live-verification pass):** rows marked "resolved + live-verified 2026-11-12" or "ACCEPTED DESIGN SIMPLIFICATION 2026-11-12" reflect a second pass that used a real local Chromium instance (`playwright-core`, cached revision 1243) against the prototype served at `http://127.0.0.1:8731` — 54/54 live checks passed, 0 failed (`V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` + `results.json`). This closed every remaining PARTIAL/NOT CONNECTED/NOT IMPLEMENTED row in Phases 3-5 except the explicitly-open product-decision items in each phase's §I, either via code (My Day queues, Customer document reveal, Lost reason-code, Applications upload/review, employee-ownership field + bulk-reassign + derived KPIs, News&IPO deep-link, Services Immersive) or via a direct owner decision recorded for Command Centre's Focus pattern and the More-hub 3-tier rebuild. See each phase file's own "LIVE-VERIFICATION UPDATE" section for full evidence and exact test-assertion names.
 
 ## Phase 1 — Design Foundation ([full report](V2_PHASE_1_AUDIT.md))
 
@@ -89,7 +91,7 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P3-40 | Services 3 categories w/ exact sub-items | WORKING |
 | P3-41 | Services My Applications, independent top-level panel | WORKING |
 | P3-43 | Services Focus: expand category w/ sub-items | WORKING |
-| P3-44 | Services Immersive: application flow full-stage | NOT IMPLEMENTED (unchanged — H-2 is fixed app-wide, but none of Services' category panels opted in with `immersive: true`, confirmed via grep this session) |
+| P3-44 | Services Immersive: application flow full-stage | **WORKING** (resolved + live-verified 2026-11-12) — `immersive: true` added to Services' category panels; live-confirmed Focus→Open full view→Immersive click-through in real Chromium |
 | P3-45 | Services Loans: RBI/Play-restriction pending badge | WORKING |
 | P3-46 | Services Protect: insurer-arrangement pending badge | WORKING |
 | P3-47 | Services: loading/error/no-data/unavailable states, all categories | **WORKING** (resolved 2026-11-12) — `my-applications` panel now has real `.twm-state-loading` and `.twm-state-error` (+ Retry) branches in addition to no-data |
@@ -102,7 +104,7 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P3-56 | Me Delete Account: de-emphasized, triggers deletion flow | **WORKING** (resolved 2026-11-12) — real button wired to the same DPDP deletion-request flow as Consents |
 | P3-57 | Me: no independent Applications tracker, shortcut only | WORKING |
 | P3-58 | Me Focus: category expands in place | WORKING |
-| P3-61 | Markets News panel links out to Home's Explore IPOs | NOT CONNECTED (unchanged — still open, confirmed via grep this session) |
+| P3-61 | Markets News panel links out to Home's Explore IPOs | **WORKING** (resolved + live-verified 2026-11-12) — `#news-ipo-explore` wired via `addEventListener`; live-confirmed the click actually changes the URL to `#/client/services/cat-invest` in real Chromium |
 | P3-62 | Markets/Home Signals cards w/ "Trade this" deep-link | **WORKING** (resolved 2026-11-12) |
 | P3-26/28 | Trade Practice panel content accuracy | UNVERIFIED — no real content exists to check |
 | P3-42 | Home journey-branch deep-link correctness into Services | UNVERIFIED — mechanism doesn't exist to test |
@@ -117,7 +119,7 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P4-04 | My Day AI Briefing: illustrative only | WORKING |
 | P4-05 | My Day Targets vs Actuals: no invented KPIs | WORKING |
 | P4-06 | My Day Focus: queue item engages Focus | WORKING (mechanism) |
-| P4-06b | My Day Focus: shows underlying record detail | PARTIAL — mechanism works, no record data exists |
+| P4-06b | My Day Focus: shows underlying record detail | **WORKING** (resolved + live-verified 2026-11-12) — queues derived live from real leads/tasks/applications; clicking a row deep-links to the real record's detail panel in Immersive |
 | P4-07 | CRM Leads\|Customers tab, fixed, Leads default | WORKING |
 | P4-08 | CRM lead scoring HOT/WARM/COLD | WORKING |
 | P4-09 | CRM lead pipeline: 4 stages exact | WORKING |
@@ -132,15 +134,15 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P4-17 | Performance: locked destination, no invented KPIs | WORKING |
 | P4-18 | Fixed-chrome exceptions (CRM tab, Applications columns) | WORKING |
 | P4-19 | Non-hallucination: no fabricated employee/lead/call data | WORKING |
-| P4-20 | CRM Customers: masked docs, reveal-on-demand | PARTIAL — message only |
-| P4-21 | More hub: each tile has own Overview/Focus/Immersive | PARTIAL — flat one-shot Immersive only |
+| P4-20 | CRM Customers: masked docs, reveal-on-demand | **WORKING** (resolved + live-verified 2026-11-12) — real per-document masked/reveal state, mirroring Client Me's KYC Vault pattern |
+| P4-21 | More hub: each tile has own Overview/Focus/Immersive | **WORKING** (resolved + live-verified 2026-11-12, owner decision: "rebuild all 8 as full 3-tier screens") — all 4 tiles now land in Focus, each with Open full view reaching Immersive |
 | P4-22 | Calling: in-context action w/ auto-attach recording | **WORKING** (resolved 2026-11-12) — one-tap call + WhatsApp template, both auto-logging activity+notes to the record |
-| P4-23 | CRM: Converted→Customer record, Lost→reason code | **PARTIAL** (upgraded 2026-11-12) — Converted now creates a real customer record; Lost still has no reason-code prompt |
+| P4-23 | CRM: Converted→Customer record, Lost→reason code | **WORKING** (resolved + live-verified 2026-11-12) — Converted creates a real customer record; Lost now requires a `#lost-reason` select, persisted — live-confirmed both the prompt and the persisted reason |
 | P4-24 | App-wide personalisation (Option C), Employee instance | **WORKING** (resolved 2026-11-12) |
 | P4-25 | CRM Focus: select lead/customer → full detail | **WORKING** (resolved 2026-11-12) — real lead/customer records now exist and navigate to detail panels |
 | P4-26 | CRM Immersive: active call/doc review full-stage | **WORKING** (resolved 2026-11-12) — lead/customer detail panels are `immersive: true`, reachable via H-2 fix |
 | P4-27 | Applications Focus: select application → checklist detail | **WORKING** (resolved 2026-11-12) — real per-application buttons navigate to detail panel |
-| P4-28 | Applications Immersive: upload/review/send-to-review | **PARTIAL** (upgraded 2026-11-12) — mechanism reachable (`immersive: true`), but content is notes-only, no upload/review UI |
+| P4-28 | Applications Immersive: upload/review/send-to-review | **WORKING** (resolved + live-verified 2026-11-12) — real file-upload input, 3-item review checklist, and a gated `#send-to-review` action; live-confirmed both the checklist and upload control render |
 | P4-29 | Tasks Focus: select task → detail/notes | **WORKING** (resolved 2026-11-12) — real per-task buttons navigate to detail panel |
 | — | Employee role-permission detail | UNVERIFIED — explicitly open product decision, no ID assigned |
 
@@ -176,13 +178,13 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P5-26 | Integrations: Connect/Test/Health/Rotate (36 buttons) | **WORKING as a disclosed mock** (resolved 2026-11-12) — all wired, local-only, explicitly labelled non-live |
 | P5-27 | Applications Review admin actions (3 chips) | **WORKING** (resolved 2026-11-12) — wired, mutates real application-stage records |
 | P5-28 | App-wide personalisation (Option C), Admin instance | **WORKING** (resolved 2026-11-12) |
-| P5-29 | Command Centre Focus: tile expands in place, dims rest | PARTIAL (unchanged) — tiles still deep-link only, never in-place-focus |
-| P5-30 | Command Centre Immersive: review/approval flow full-stage | PARTIAL (unchanged) — mechanism works, generic content only |
-| P5-31 | More hub: each tile has own Overview/Focus/Immersive | PARTIAL (unchanged) — flat one-shot Immersive only |
+| P5-29 | Command Centre Focus: tile expands in place, dims rest | **ACCEPTED DESIGN SIMPLIFICATION 2026-11-12** — owner explicitly chose "keep deep-link-only" over building in-place Focus; no longer an open defect |
+| P5-30 | Command Centre Immersive: review/approval flow full-stage | **ACCEPTED DESIGN SIMPLIFICATION 2026-11-12** — same owner decision as P5-29; generic Signals Desk/System Health content via the existing mechanism is accepted as-is |
+| P5-31 | More hub: each tile has own Overview/Focus/Immersive | **WORKING** (resolved + live-verified 2026-11-12, owner decision: "rebuild all 8 as full 3-tier screens") — all 4 Admin tiles now land in Focus, each with Open full view reaching Immersive |
 | P5-32 | Signals Desk: RA publish-gating switch control | **WORKING** (resolved 2026-11-12) — real `#ra-toggle` button wired |
-| P5-33 | Team Employees: onboard/offboard/session-revoke/perf/call-review | **PARTIAL** (upgraded 2026-11-12) — onboard/offboard + revoke wired; performance/call-review explicitly disclosed as not built (no record-ownership field) |
-| P5-34 | Allocation Engine: bulk re-assign, editable rules | **PARTIAL** (upgraded 2026-11-12) — rule add/remove wired; bulk re-assign explicitly disclosed as not wired (no lead owner field) |
-| P5-35 | Sales & CRM: org-wide lead/customer oversight | **PARTIAL** (upgraded 2026-11-12) — real org-wide list wired; reassignment visibility still absent |
+| P5-33 | Team Employees: onboard/offboard/session-revoke/perf/call-review | **WORKING** (resolved + live-verified 2026-11-12, owner decision: "derive Performance KPIs from real data") — onboard/offboard + revoke wired; `employeeId` field added, performance now derived live from real leads/customers; live-confirmed KPI numbers render. Call-recording review correctly remains absent — no real telephony data exists in this prototype, disclosed in-UI |
+| P5-34 | Allocation Engine: bulk re-assign, editable rules | **WORKING** (resolved + live-verified 2026-11-12) — rule add/remove wired; bulk re-assign now fully wired via the new `employeeId` field (checkbox list + target select + apply); live-confirmed `1 lead reassigned` |
+| P5-35 | Sales & CRM: org-wide lead/customer oversight | **WORKING** (resolved + live-verified 2026-11-12) — real org-wide list wired; reassignment/owner visibility now shown via the same `employeeId` field; live-confirmed owner attribution renders |
 | P5-36 | Sales & CRM: sales monitoring/pipeline visualization | **WORKING** (resolved 2026-11-12) — real `TwmChart.funnel`/`columns` pipeline visualization |
 | — | Admin role/permission-set for approvals | UNVERIFIED — explicitly open product decision |
 | — | "View as" persona switch | UNVERIFIED — explicitly out of locked baseline per spec |

@@ -150,3 +150,39 @@ Recounting all 36 applicable rows (the 2 explicitly-open Section I items remain 
 - **NOT IMPLEMENTED: 0**
 
 **Phase 5 completion (post-remediation): 30/36 (≈83%)**, up from 25/36 (≈69%). Every item that moved, moved up — nothing regressed. The three items upgraded only to PARTIAL (P5-33, P5-34, P5-35) are each honestly disclosed in the code's own UI text as data-model-limited (no owner/employee-id field on a lead/customer record) rather than claimed fully WORKING — consistent with the mission's "never manufacture a 100% score" rule. The three remaining PARTIAL items (P5-29, P5-30, P5-31) are unchanged, disclosed design-pattern gaps, not regressions.
+
+---
+
+## LIVE-VERIFICATION UPDATE (2026-11-12, real Playwright/Chromium run)
+
+Unlike every prior update in this file (static code-trace only), this pass used a real local Chromium instance (cached revision 1243, launched via `playwright-core`) against the app served at `http://127.0.0.1:8731`. Script and raw results: `V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` and `results.json` (54/54 passed, 0 failed, as of the final rerun).
+
+### Owner decisions applied this session (not code changes — recorded explicit choices)
+
+Three open design-pattern questions from the PARTIAL rows below were put to the owner directly rather than guessed at. All three answers are now locked and reflected in the status changes that follow:
+
+- **Command Centre Focus pattern (P5-29/P5-30):** owner chose **"keep deep-link-only"** over rebuilding an in-place Focus-dim behavior for the 8 tiles. This is an accepted design simplification, not a defect — reclassified below from PARTIAL to an explicitly-accepted pattern, closing the open question without changing behavior.
+- **More hub depth (P5-31, and Employee's equivalent P4-21):** owner chose **"rebuild all 8 as full 3-tier screens"** over the alternative flat-pattern recommendation — implemented in full for both Admin's and Employee's 4 tiles each (see below and `V2_PHASE_4_AUDIT.md`).
+- **Performance KPIs (P5-33 and Employee's Performance tile):** owner chose **"derive from existing real data"** — implemented via the shared `employeeId` record-ownership field now present on every lead/customer, never fabricated.
+
+### Status changes
+
+| Req ID | Prior status | New status | Live evidence |
+|---|---|---|---|
+| P5-31 | PARTIALLY IMPLEMENTED | **WORKING** | Per the owner's explicit "rebuild all 8 as full 3-tier" decision, Admin's More hub (Integrations, Signals Desk, Content and SOP, System Health) was rebuilt so each tile click lands in Focus mode (not direct Immersive) with its own "Open full view" control reaching a distinct Immersive sub-view. Live-confirmed: `PASS — P5-31: Admin More hub tile click enters Focus (not direct Immersive)`, `PASS — P5-31: Admin More hub Focus shows Open full view`. |
+| P5-33 | PARTIALLY IMPLEMENTED | **WORKING** | `employeePerformance(employeeId)` ([admin.js:130-132](scripts/content/admin.js#L130-L132)) derives real per-employee performance figures from the shared `leads()`/`customers()` stores filtered by the new `employeeId` record-ownership field — never fabricated, per the owner's "derive from real data" decision. Call-recording review remains correctly absent (disclosed: "no real audio/telephony data exists in this prototype"). Live-confirmed: `PASS — P5-33: Admin Team View Performance shows derived KPI numbers`. |
+| P5-34 | PARTIALLY IMPLEMENTED | **WORKING** | Bulk re-assign is now fully wired: a checkbox list of leads, a target-employee `<select>`, and a `#reassign-apply` button that sets `lead.employeeId = targetId` for every checked lead and persists ([admin.js:243-258](scripts/content/admin.js#L243-L258)) — the previously-missing data-model field (`employeeId`) now exists, closing the gap the prior update disclosed as blocking. Live-confirmed: `PASS — P5-34: bulk reassign applies and reports status :: 1 lead reassigned.` |
+| P5-35 | PARTIALLY IMPLEMENTED | **WORKING** | `orgCrmBody()` now shows per-record owner attribution (`ownerName(l.employeeId)`, [admin.js:276-283](scripts/content/admin.js#L276-L283)) alongside the real combined leads/customers list — the "reassignment visibility" half named in the original gap is now resolved via the same `employeeId` field. Live-confirmed: `PASS — P5-35: Sales & CRM shows owner attribution`. |
+| P5-29 | PARTIALLY IMPLEMENTED | **ACCEPTED DESIGN SIMPLIFICATION (not a defect)** | Owner explicitly chose to keep Command Centre tiles as direct deep-links rather than rebuilding an in-place Focus-dim expansion. Behavior unchanged from the prior update (tiles still navigate straight to their destination screen); the status changes from "gap to be closed" to "resolved by owner decision — working as intended." |
+| P5-30 | PARTIALLY IMPLEMENTED | **ACCEPTED DESIGN SIMPLIFICATION (not a defect)** | Same owner decision as P5-29 — the 2 tiles with a `panel` argument reaching generic Signals Desk/System Health content (rather than a Command-Centre-specific flow) is accepted as-is, not pursued further. |
+
+### Updated Phase 5 completion (live-verified)
+
+Recounting all 36 applicable rows:
+
+- **WORKING: 34** (all prior WORKING items, plus P5-31, P5-33, P5-34, P5-35 — 4 newly resolved and live-confirmed)
+- **ACCEPTED DESIGN SIMPLIFICATION: 2** (P5-29, P5-30 — owner-confirmed, not counted as outstanding defects)
+- **PARTIALLY IMPLEMENTED: 0**
+- **NOT IMPLEMENTED: 0**
+
+**Phase 5 completion (live-verified): 34/36 (≈94%)**, with the remaining 2 rows (P5-29, P5-30) explicitly resolved by owner decision rather than code change — not outstanding work. Every WORKING item in this phase is now both code-verified and live-browser-verified in a real Chromium instance. The 2 Section I items (admin role/permission-set, "View as" persona switch) remain correctly excluded from the denominator pending their own owner decisions, unchanged.

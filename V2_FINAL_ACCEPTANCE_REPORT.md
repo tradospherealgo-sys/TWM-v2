@@ -54,3 +54,24 @@ Total across Phases 1–5: 138/152 applicable requirements WORKING (≈91%), 1 N
 The mission's own constraints — "never classify a frontend mock as a production integration" and "never manufacture a 100% score" — are honored by: (a) every mock/local-only Admin Integrations control being disclosed as such in its own UI text, not presented as a live connection; (b) three Admin items staying at PARTIAL rather than being pushed to WORKING on the strength of partial progress; (c) this report naming BLOCKED BY EXTERNAL DEPENDENCY items separately rather than scoring them against the frontend prototype; (d) every phase gate above stating its caveat inline rather than only in a footnote.
 
 **Recommended next step before treating this mission as fully closed:** a live Playwright/browser regression run of every item re-classified this session, once the Preview tool or Chrome-extension bridge is available — per `V2_EXECUTION_CHECKPOINT.md`'s "How to resume" section. This report's PASS verdict rests on code-trace evidence only, and should be upgraded to a live-tested PASS at that point rather than re-litigated from scratch.
+
+---
+
+## LIVE-TESTED PASS UPDATE (2026-11-12, second session)
+
+The recommended next step above has now happened. A real local Chromium instance (`playwright-core`, cached revision 1243) was run against the prototype at `http://127.0.0.1:8731` — full script and raw output at `V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` / `results.json`. **Final result: 54/54 live checks passed, 0 failed**, after 4 rerun-and-fix cycles (2 genuine test-script bugs found and fixed along the way — Focus-mode pointer-events dimming correctly blocking a test's own wrong click target, and a same-hash `page.goto()` no-op not firing `hashchange` — neither was an app defect; both are detailed in `V2_TEST_RESULTS.md`'s own LIVE-VERIFICATION PASS section).
+
+This run also incorporates further implementation work completed in this second session, closing out every remaining PARTIAL item from Phases 3-5 except items that depend on a genuine, still-open owner decision:
+
+- **Phase 3 (Client):** P3-44 (Services Immersive) and P3-61 (News&IPO outbound deep-link) both resolved and live-confirmed. **Phase 3 is now 49/49 (100%)** of its applicable denominator.
+- **Phase 4 (Employee):** P4-06b (My Day real derived queues), P4-20 (Customer document reveal/hide), P4-21 (More hub rebuilt as full 3-tier per owner decision), P4-23 (Lost reason-code), and P4-28 (Applications upload/review/checklist) all resolved and live-confirmed. **Phase 4 is now 31/31 (100%)** of its applicable denominator.
+- **Phase 5 (Admin):** P5-31 (More hub 3-tier, same owner decision as P4-21), P5-33/34/35 (employee-ownership field added; derived Performance KPIs, bulk-reassign, and owner-attribution visibility all wired and live-confirmed) all resolved. P5-29/P5-30 (Command Centre Focus pattern) are resolved by an explicit owner decision — "keep deep-link-only" — rather than a code change, and are now classified as an accepted design simplification, not an open defect. **Phase 5 is now 34/36 WORKING + 2/36 accepted-by-decision**, with zero items remaining in PARTIAL/NOT CONNECTED/NOT IMPLEMENTED.
+
+Three owner decisions were obtained directly (not guessed at) and are now locked product decisions, each applied consistently across both Employee and Admin where relevant:
+1. Command Centre Focus pattern → keep deep-link-only.
+2. More-hub depth → rebuild all 8 tiles (4 Employee + 4 Admin) as full 3-tier Overview/Focus/Immersive screens.
+3. Performance KPIs → derive from existing real data (never fabricate) — implemented via a new shared `employeeId` record-ownership field on leads/customers.
+
+**Updated overall mission gate:** every requirement with a locked spec to check against across Phases 1–5 is now either WORKING or explicitly accepted/deferred by a recorded owner decision, and that status is now confirmed in a real browser run, not inferred from source alone. This is a genuine upgrade from the prior "PASS, code-trace only" verdict to a **live-tested PASS** — the exact gate this report's prior section asked for.
+
+Remaining open items are now exactly: (a) explicitly-flagged product decisions still awaiting an owner (Employee/Admin role-permission matrices, exact Performance-KPI/System-Health numeric thresholds beyond "derive from real data," the Admin "View as" persona switch, light theme), and (b) device/accessibility test-coverage gaps (notched-device safe-area, full keyboard-Tab traversal) that require hardware or tooling beyond this prototype's scope — neither category is a code defect, and none is claimed resolved.

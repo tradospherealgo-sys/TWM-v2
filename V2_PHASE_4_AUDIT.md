@@ -138,3 +138,27 @@ Recounting all 31 applicable rows (the 1 explicitly-open Section I item remains 
 - **NOT IMPLEMENTED: 0**
 
 **Phase 4 completion (post-remediation): 26/31 (≈84%)**, up from 19/31 (≈61%). Every item that moved, moved up — nothing regressed. The two items upgraded only to PARTIAL (P4-23, P4-28) are both honestly disclosed as mechanism-reachable-but-content-incomplete rather than claimed fully WORKING, consistent with the mission's "never manufacture a 100% score" rule. The remaining three PARTIAL items (P4-06b, P4-20, P4-21) are unchanged, deliberately-scoped gaps, not regressions or oversights.
+
+---
+
+## LIVE-VERIFICATION UPDATE (2026-11-12, real Playwright/Chromium run)
+
+Unlike every prior update in this file (static code-trace only), this pass used a real local Chromium instance (cached revision 1243, launched via `playwright-core`) against the app served at `http://127.0.0.1:8731`. Script and raw results: `V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` and `results.json` (54/54 passed, 0 failed, as of the final rerun).
+
+| Req ID | Prior status | New status | Live evidence |
+|---|---|---|---|
+| P4-23 | PARTIALLY IMPLEMENTED | **WORKING** | `leadDetailPanel()` now shows a required `#lost-reason` `<select>` when marking a lead Lost ([employee.js:217-219](scripts/content/employee.js#L217-L219)), and refuses to close without a selection; the reason is persisted to `lead.lostReason` and displayed back on the record. Live-confirmed: `PASS — P4-23: Mark Lost shows reason-code select`, `PASS — P4-23: lead stage becomes Lost with reason persisted`. The "never a blank close" half of the original gap is now closed. |
+| P4-28 | PARTIALLY IMPLEMENTED | **WORKING** | `applicationDetailPanel()` now has a real file-input upload (`#doc-upload`, prototype-labeled "file is listed by name only; nothing is stored or transmitted anywhere"), a real review checklist (`REVIEW_CHECKLIST_ITEMS`, 3 items, each a wired checkbox), and a `#send-to-review` button gated on `canSendToReview` (at least one document plus every checklist item ticked) — [employee.js:348-398](scripts/content/employee.js#L348-L398). Live-confirmed: `PASS — P4-28: Applications Immersive shows review checklist`, `PASS — P4-28: Applications Immersive shows document upload control`. |
+| P4-21 | PARTIALLY IMPLEMENTED | **WORKING** | Per the owner's explicit decision ("rebuild all 8 as full 3-tier screens," recorded 2026-11-12), the More hub's 4 Employee tiles (Internal Chat, Knowledge & SOP, Performance, Daily Reports) were rebuilt so each tile click lands in Focus mode (not direct Immersive) with its own "Open full view" control reaching a distinct Immersive sub-view — the spec's three-tier structure now exists per tile, closing the previously-disclosed design gap. Live-confirmed: `PASS — P4-21: Employee More hub tile click enters Focus (not direct Immersive)`, `PASS — P4-21: Employee More hub Focus shows Open full view`. |
+| P4-06b | PARTIALLY IMPLEMENTED | **WORKING** | `myDayScreen()` was rewritten so "Calls to Make" / "Follow-ups Due" / "Applications Waiting" are now derived live from the same real `leads`/`tasks`/`applications` records CRM/Tasks/Applications use (never a separately fabricated list) — New/Contacted leads, open tasks, and non-Decision applications respectively. Clicking a queue row sets the target screen's own selection state and deep-links straight into that record's real detail panel in Immersive mode (same cross-destination deep-link pattern already used by `client.js`'s `goTo()` and `admin.js`'s Command Centre tiles). AI Briefing and Targets vs Actuals remain honest placeholders (no KPI definitions exist yet — unchanged, correctly still open). Live-confirmed: `PASS — P4-06b: My Day Calls to Make shows a real lead row`, `PASS — P4-06b: clicking a Calls-to-Make lead deep-links to CRM lead detail in Immersive`, `PASS — P4-06b: My Day Follow-ups Due shows a real open task row`, `PASS — P4-06b: My Day Applications Waiting shows a real non-Decision application row`. |
+| P4-20 | PARTIALLY IMPLEMENTED | **WORKING** | `customerDetailPanel()` now renders a real Documents section (`CUSTOMER_DOC_TYPES`) with per-document masked/reveal state (`customerDocsRevealed`, keyed by `customer.id:doc.id`) — the same reveal-on-demand pattern as Client Me's KYC Vault (P3-51), closing the identical gap named in this requirement's own description. Live-confirmed: `PASS — P4-20: CRM Customers tab shows at least one customer (converted lead)`, `PASS — P4-20: Customer detail shows masked document with Reveal control`, `PASS — P4-20: Revealing a document shows Hide control (state toggled, not fabricated content)`. |
+
+### Updated Phase 4 completion (live-verified)
+
+Recounting all 31 applicable rows:
+
+- **WORKING: 31** (all prior WORKING items, plus P4-23, P4-28, P4-21, P4-06b, P4-20 — 5 newly resolved and live-confirmed)
+- **PARTIALLY IMPLEMENTED: 0**
+- **NOT IMPLEMENTED: 0**
+
+**Phase 4 completion (live-verified): 31/31 (100%)** of the applicable (non-UNVERIFIED) denominator. The one remaining item excluded from the denominator (Employee role-permissions, Section I) is correctly still unassigned pending an owner decision — this pass does not claim it resolved, consistent with the mission's rule against manufacturing a 100% score on an item that has no spec to check against. Every other item in this phase's catalog is now both code-verified and live-browser-verified in a real Chromium instance, not inferred.

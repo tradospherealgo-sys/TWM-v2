@@ -117,3 +117,23 @@ This session implemented fixes for every defect this file's live Playwright evid
 - All 4 H-1 reproduction scripts (`repro_focus_bug.js`, `verify_cmdk_focus_bug.js`, `verify_cascade.js`, `verify_smc_bubbling.js`) — describe the pre-fix defect accurately as a historical record; re-running them against current code should now show no stale-focus symptom, since `focusState` is reset on every route-key change and the SMC-connect click no longer bubbles into the panel's own focus listener.
 
 No new live test evidence was generated this session. The only test artifact added is the `node --check` pass confirmed above (no new output file — the command and PASS result are the full evidence). Re-running the full Playwright suite once the Preview tool / Chrome-extension bridge is available again is the correct next verification step, not a substitute for the code-trace work already done.
+
+## LIVE-VERIFICATION PASS (2026-11-12, second session — real Playwright/Chromium run)
+
+The "recommended next step" from the section above has now happened. This pass used `playwright-core` with a cached Chromium binary (revision 1243, explicit `executablePath`) against the app served by `python3 -m http.server 8731 --bind 127.0.0.1` (a fresh server instance for this pass; port differs from the 8743 used in the original 2026-11-11 audit, same static files). Full script: [V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js](V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js). Raw results: [V2_AUDIT_EVIDENCE/2026-11-12_playwright/results.json](V2_AUDIT_EVIDENCE/2026-11-12_playwright/results.json). Final tally after 4 rerun-and-fix cycles: **54/54 passed, 0 failed.**
+
+What this run covers:
+- All 3 roles' top-level destinations render with no console errors, no page errors, and no failed network requests (24 checks).
+- Services overview, CRM lead cards, Focus→"Open full view"→Immersive chain (the H-2 mechanism) for Employee CRM.
+- P4-23 (Mark Lost reason-code select + persisted reason), P4-28 (Applications Immersive checklist + upload control).
+- P4-21 / P5-31 (More hub tile click enters Focus, not direct Immersive; Focus shows Open full view) for both Employee and Admin — confirming the owner's "rebuild all 8 as full 3-tier" decision is actually live in the browser, not just in source.
+- P5-33 (derived Performance KPI numbers), P5-34 (bulk reassign applies and reports status), P5-35 (owner attribution in Sales & CRM).
+- P4-06b (My Day's 3 derived queues show real rows; clicking one deep-links to the real record's detail panel in Immersive).
+- P4-20 (Customer document masked/reveal/hide, mirroring Client Me's KYC Vault pattern).
+- Responsive sweep at mobile (390×844)/tablet (834×1194)/desktop-landscape (1440×900): Admin dock fully visible, no console errors, at every breakpoint.
+
+This **confirms, in a real browser, every item** the "Live-test results above that are superseded by this session's code changes" sub-section (immediately above) predicted would now pass but had not yet re-run: the H-1-related `*_immersive_nav`/`*_tile_deeplink` timeouts no longer occur, and the Admin dock responsive clipping no longer reproduces. (The ⌘K input-filtering re-test specifically was not re-included in this script, since Phase 6's own regression already covers it separately — see `V2_PHASE_6_AUDIT.md`.)
+
+Two genuine test-script bugs were found and fixed during this pass (not app defects — see `V2_PHASE_5_AUDIT.md`'s P4-20 discussion in `V2_PHASE_4_AUDIT.md` LIVE-VERIFICATION UPDATE for detail): (1) a test tried to click a panel correctly dimmed to `pointer-events: none` by Focus mode's own CSS rule — a test-script error, not a bug; (2) `page.goto()` to a URL whose hash is unchanged from the current page is a no-op in Chromium (no `hashchange` fires) — fixed by routing through a genuinely different intermediate hash before re-asserting.
+
+**Net effect: the "No live test evidence was generated this session" caveat immediately above this section no longer applies.** Every status upgrade in `V2_PHASE_3/4/5_AUDIT.md`'s respective "LIVE-VERIFICATION UPDATE" sections, `V2_MASTER_AUDIT_REPORT.md`'s live-verified table, and `V2_REQUIREMENT_TRACEABILITY.md`'s "resolved + live-verified 2026-11-12" rows are backed by this real-browser run, not code-trace alone.

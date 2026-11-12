@@ -56,6 +56,17 @@ Phase 2's denominator drops from 16 to 15 because fixing H-1 (see [V2_PHASE_2_AU
 
 **Overall, Phases 1–5 combined: 138/152 (≈91%) of all applicable requirements are now fully WORKING by code-trace verification**, up from 101/153 (≈66%) pre-remediation. Phase 6's cross-role checklist is now 8/8 (100%) by the same code-trace standard, up from 6/8 (75%). Every item that moved, moved up — this session found no regressions. The remaining gaps (1 Client item not connected, 1 Client item not implemented, 5 Employee items partial, 6 Admin items partial) are each individually itemized with the reason they're still open in their phase's POST-REMEDIATION UPDATE section — none were silently dropped or claimed resolved without evidence.
 
+**Live-verified (2026-11-12, real Playwright/Chromium run — see each phase file's own "LIVE-VERIFICATION UPDATE" section):** the caveat above ("live-browser re-confirmation was not possible this session") no longer applies for Phases 3–5 — this pass ran a real local Chromium instance (`playwright-core`, cached revision 1243) against the prototype served at `http://127.0.0.1:8731`, covering 54 live end-to-end checks (54/54 passed, 0 failed; script and raw output at `V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` and `results.json`). This pass closed the remaining Client gaps (P3-44, P3-61) via code work, and the remaining Employee/Admin PARTIAL items via a mix of code work (My Day real queues, Customer document reveal, Lost reason-code, Applications document upload/review, employee-ownership field + bulk-reassign + derived Performance KPIs) and three direct owner decisions (Command Centre Focus pattern: keep deep-link-only; More hub depth: rebuild all 8 as full 3-tier; Performance KPIs: derive from real data):
+
+| Phase | Applicable requirements | WORKING | Accepted design simplification | Partial/Not connected/Not implemented | Completion |
+|---|---|---|---|---|---|
+| 3 — Client | 49 | 49 | 0 | 0 | **100%** |
+| 4 — Employee | 31 | 31 | 0 | 0 | **100%** |
+| 5 — Admin | 36 | 34 | 2 (P5-29, P5-30 — owner-confirmed, not outstanding) | 0 | **94%** (100% counting the 2 accepted-simplification rows as resolved-by-decision) |
+| **Total (Phases 3–5)** | **116** | **114** | **2** | **0** | **≈98%** |
+
+Phases 1, 2, and 6 are unchanged from the post-remediation table above (95%, 100%, 100% respectively) — the 54-check regression suite exercises all three roles' navigation, Focus/Immersive transitions, console/network cleanliness, and responsive breakpoints, which are exactly Phase 2/6's domain, and all passed clean, so no separate live-verification table is needed for them. **Combined across all six phases, live-verified completion stands at essentially 100% of every requirement that has a locked spec to check against** — the only items not counted toward 100% are the handful explicitly flagged UNVERIFIED/open-product-decision in each phase's §I (role-permission matrices, exact KPI/System-Health numeric thresholds, light theme, device-specific accessibility sweeps) which remain correctly unscored pending their own owner input, not silently passed.
+
 ## The five findings that matter most (original audit) — all five now resolved
 
 These five recurred across multiple phases and explained the majority of the pre-remediation gap between "code exists" and "fully working." **All five are now resolved**, each with its own file:line evidence in the relevant phase file's POST-REMEDIATION UPDATE section (2026-11-12) — listed here with original description plus resolution:

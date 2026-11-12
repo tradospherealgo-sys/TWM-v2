@@ -13,7 +13,13 @@ Complete all six phases of the Tradosphere V2 frontend prototype (`~/Downloads/T
 
 "Start now. Inspect, checkpoint, implement, test, document and continue until the six-phase mission is complete." — full autonomous continuation, no mid-phase approval needed. Only ask when a genuine unresolved product decision or blocker exists (see "Open product decisions" below for the current list — these are the only things that should prompt a question, not routine implementation work).
 
-## Status as of 2026-11-12
+## STATUS UPDATE (2026-11-12, second session — live-verified)
+
+Everything below this banner, down through "How to resume," describes the state as of the *first* 2026-11-12 session (code-trace-only, no live browser available). That limitation no longer applies: a real local Chromium instance (`playwright-core`, cached revision 1243) was launched this session and run against the prototype at `http://127.0.0.1:8731`. Final result: **54/54 live checks passed, 0 failed** (`V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` + `results.json`). All 13 previously-open items below were either resolved in code and live-confirmed, or resolved by a direct owner decision (Command Centre Focus pattern → keep deep-link-only; More-hub depth → rebuild all 8 as full 3-tier; Performance KPIs → derive from real data). Updated headline numbers: Phase 3 49/49 (100%), Phase 4 31/31 (100%), Phase 5 34/36 WORKING + 2/36 accepted-by-owner-decision (effectively 100% of the applicable denominator) — full detail in each phase file's own "LIVE-VERIFICATION UPDATE" section, `V2_MASTER_AUDIT_REPORT.md`'s live-verified table, and `V2_FINAL_ACCEPTANCE_REPORT.md`'s "LIVE-TESTED PASS UPDATE." The local preview server (`python3 -m http.server 8731 --bind 127.0.0.1`) is running and has been verified responding (HTTP 200) multiple times this session. The project was also pushed to a new GitHub repo this session: `https://github.com/tradospherealgo-sys/TWM-v2` (branch `main`, full history + this session's commits).
+
+The remaining open items, after this pass, are limited to: explicitly-flagged open product decisions still awaiting an owner (exact Performance-KPI/System-Health numeric thresholds, Employee/Admin role-permission matrices, Admin "View as" persona switch, light theme) and device/accessibility test-coverage gaps (notched-device safe-area, full keyboard-Tab traversal) that require hardware/tooling beyond this prototype's scope — neither category is a code defect.
+
+## Status as of 2026-11-12 (first session, superseded by the update above — preserved for history)
 
 ### Code (implementation session, now complete for this remediation pass)
 All Priority 0, 1, and 2 items from `V2_REMAINING_WORK.md` are resolved, plus 15 of 19 Priority 3 per-screen items. Full detail in `V2_REMEDIATION_CHANGELOG.md`. Headline numbers (post-remediation, code-verified via static trace + `node --check` only — **no live-browser re-run performed**):

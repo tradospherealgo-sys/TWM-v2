@@ -125,3 +125,7 @@ All of the following were updated to reflect the code changes catalogued above, 
 - `V2_REQUIREMENT_TRACEABILITY.md` — ~30 individual rows updated with resolution status and evidence; top-of-file disclosure note added.
 - `V2_TEST_RESULTS.md` — methodology note added disclosing which prior negative-evidence greps and live-test results are now stale.
 - `V2_REMAINING_WORK.md` — all 23 punch-list items tagged RESOLVED/PARTIALLY RESOLVED/STILL OPEN inline.
+
+## SUPERSEDED BY A SECOND SESSION (2026-11-12, live-verification pass)
+
+Everything above this line is preserved as the historical record of the first 2026-11-12 (code-trace-only) session. A second session on the same date closed out every item this changelog left PARTIAL/STILL OPEN above (P3-44, P3-61, P4-06b, P4-20, P4-21, P4-23, P4-28, P5-29, P5-30, P5-31, P5-33, P5-34, P5-35), using a real local Chromium instance (`playwright-core`) — 54/54 live checks passed, 0 failed (`V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` + `results.json`). Three items (P5-29, P5-30, and the P4-21/P5-31 More-hub depth question) were resolved via direct owner decisions rather than code changes: Command Centre Focus pattern → keep deep-link-only; More-hub depth → rebuild all 8 as full 3-tier. Full per-item evidence is in each phase file's own "LIVE-VERIFICATION UPDATE" section, not duplicated here. See `V2_EXECUTION_CHECKPOINT.md`'s "STATUS UPDATE (2026-11-12, second session)" banner for the current overall state.
