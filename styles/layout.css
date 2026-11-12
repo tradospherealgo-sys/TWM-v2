@@ -66,6 +66,7 @@
 .twm-stage__panel--focused {
   grid-column: 1 / -1;
 }
+.twm-panel__expand-btn { margin-bottom: var(--twm-space-3); }
 /* Immersive mode: single panel takes the full stage, dock minimizes (handled in dock.js) */
 .twm-stage--immersive .twm-stage__grid {
   grid-template-columns: 1fr;
@@ -192,6 +193,36 @@
 @media (min-width: 1024px) {
   .twm-stage__grid { grid-template-columns: repeat(3, 1fr); }
   .twm-stage { padding: 0 var(--twm-space-10) var(--twm-space-8); max-width: 1440px; margin: 0 auto; }
+}
+
+/* ---------- Customizable layout — "Fully Customizable (Option C)" ---------- */
+.twm-stage__customize-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--twm-space-3);
+  margin-bottom: calc(var(--twm-space-5) * -1 + var(--twm-space-2));
+}
+.twm-stage__panel--customizing {
+  cursor: grab;
+  outline: 1px dashed var(--twm-border-glass-strong);
+}
+.twm-stage__panel--customizing:active { cursor: grabbing; }
+.twm-panel__customize-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--twm-space-2);
+  margin-bottom: var(--twm-space-3);
+}
+.twm-drag-handle {
+  cursor: grab;
+  color: var(--twm-text-muted);
+  padding: 0 var(--twm-space-2);
+}
+.twm-panel__resize-btn, .twm-panel__hide-btn {
+  min-height: 28px;
+  padding: 0 var(--twm-space-3);
+  font-size: var(--twm-fs-caption);
 }
 
 /* Kanban-style stage-column views (CRM Leads, Applications, Applications Review, Compliance):

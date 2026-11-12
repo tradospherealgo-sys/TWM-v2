@@ -201,6 +201,49 @@ button, input, select, textarea {
   100% { background-position: -200% 0; }
 }
 
+/* ---------- Chart / data-visualization primitive (Phase 1, P1-21) ---------- */
+.twm-chart { width: 100%; }
+.twm-chart--sparkline { display: block; width: 100%; height: auto; }
+.twm-chart--columns {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--twm-space-3);
+  height: 120px;
+}
+.twm-chart__col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: var(--twm-space-1);
+}
+.twm-chart__bar {
+  width: 100%;
+  max-width: 36px;
+  background: var(--twm-accent-primary);
+  border-radius: var(--twm-radius-sm) var(--twm-radius-sm) 0 0;
+  min-height: 2px;
+}
+.twm-chart__label { font-size: var(--twm-fs-caption); color: var(--twm-text-muted); }
+.twm-chart__value { font-size: var(--twm-fs-caption); color: var(--twm-text-secondary); }
+.twm-chart--funnel { display: flex; flex-direction: column; gap: var(--twm-space-2); }
+.twm-chart__funnel-row { display: flex; align-items: center; gap: var(--twm-space-3); }
+.twm-chart__funnel-label { flex: 0 0 120px; font-size: var(--twm-fs-caption); color: var(--twm-text-secondary); }
+.twm-chart__funnel-track {
+  flex: 1;
+  height: 10px;
+  border-radius: var(--twm-radius-pill);
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.twm-chart__funnel-fill {
+  height: 100%;
+  background: var(--twm-accent-secondary);
+  border-radius: var(--twm-radius-pill);
+}
+
 /* Disclosure strip — PRACTICE ribbon / data-delay disclosure, must be visible on the panel itself */
 .twm-disclosure-strip {
   display: flex;
