@@ -107,3 +107,46 @@ Counting each Req ID in Sections B-E once (27 total applicable requirement lines
 Total: 25+2+4+5 = 36. Correcting the running count: WORKING 25, NOT-CONNECTED 2, PARTIAL 4, NOT-IMPLEMENTED 5 (P5-28 and P5-33 through P5-36) = 36 total requirement lines.
 
 **Phase 5 completion: 25/36 (≈69%)** by requirement count (numerator = fully WORKING only, consistent with the Phase 1-4 methodology). This is the highest per-phase completion score of the three role audits (Client 49%, Employee 61%, Admin 69%), driven by Admin's screens being overwhelmingly structural/presence-level (named lists of tiles, services, and pipeline stages that the code reproduces exactly) rather than requiring individual-record interactions the way Client and Employee's Focus/Immersive requirements repeatedly do. The recurring gap pattern is consistent with the rest of the audit: every actionable *button* (Connect/Test/Health/Rotate, Approve/Send Back, Forward to Lender/Insurer) is visually present but wired to nothing, and the app-wide personalisation and chart-rendering gaps already found in Phases 1, 3, and 4 reappear here as Admin's own named instances of the same two unimplemented, cross-cutting features.
+
+---
+
+## POST-REMEDIATION UPDATE (2026-11-12)
+
+**Scope of this update:** remediation/implementation session closing out the defect register above, not a new independent audit. Method: static file:line re-inspection of the fully rewritten [admin.js](scripts/content/admin.js) (now 452 lines, up from 179) plus `node --check`. **The live-browser Preview tool and the Chrome-extension bridge were both unavailable this session** (`spawn .../disclaimer ENOENT`; `list_connected_browsers` returned `[]`) — every status change below is a code-trace verification, not a live-click re-confirmation. "WORKING" below means the code path exists, is wired end-to-end via a real `addEventListener`, and reads/writes a real (if illustrative or explicitly-mock) persisted record — not "re-confirmed by an actual click in a browser this session."
+
+### Resolved this session
+
+| Req ID | Was | Now | Evidence |
+|---|---|---|---|
+| P5-26 | NOT CONNECTED | **WORKING (as a disclosed mock)** | `integrationsPanel()` now wires all 36 Connect/Test/Health/Rotate buttons via `el.querySelectorAll('[data-act]').forEach(...)`, mutating and persisting a real `twm-admin-integrations` state object per service ([admin.js:367-385](scripts/content/admin.js#L367-L385)). The panel's own disclosure text is explicit that this is "local-only until a real backend integration exists" — correctly presented as WORKING-as-a-mock, not a live connected service (per the mission's "never classify a frontend mock as a production integration" rule, this is flagged as a mock explicitly rather than silently upgraded to an unqualified WORKING). |
+| P5-27 | NOT CONNECTED | **WORKING** | `reviewActionsBody()` now wires Document Checker / Approve / Send Back / Forward to Lender/Insurer via real `addEventListener` handlers ([admin.js:261-283](scripts/content/admin.js#L261-L283)) that mutate and persist real application-stage transitions to the same `twm-employee-applications` store Employee writes to, plus a logged note per action. The admin role/permission-set question for *which* role may take these actions remains an explicitly open decision (unchanged badge at [admin.js:253](scripts/content/admin.js#L253)) — the mechanism is WORKING; the permission gate is still correctly left open, not fabricated. |
+| P5-32 | PARTIALLY IMPLEMENTED | **WORKING** | `signalsDeskPanel()` now has a real `#ra-toggle` button wired via `addEventListener`, flipping and persisting `twm-signals-ra-gated` ([admin.js:400-404](scripts/content/admin.js#L400-L404)) — the previously-described-only switch is now an actual control. Role-level authority over the switch remains correctly flagged as an open decision (unchanged). |
+| P5-36 | NOT IMPLEMENTED | **WORKING** | `salesMonitoringBody()` now renders `TwmChart.funnel(leadFunnel, ...)` for the lead pipeline and `TwmChart.columns(appCols, ...)` for applications-by-stage ([admin.js:213-222](scripts/content/admin.js#L213-L222)), both derived live from the same real `leads()`/`applications()` reads every other screen uses — a genuine business-performance pipeline visualization now exists, inheriting the shared `TwmChart` primitive built for this mission (same fix credited for Client/Employee in Phases 3-4). |
+| P5-28 | NOT IMPLEMENTED | **WORKING** | Option C (drag-to-reorder, resize-cycle, hide, save/restore, restore-default) is the same shared stage.js mechanism credited in Phases 3-4, applied identically to Admin's Command Centre/Team/Sales & CRM/Applications Review/Compliance/More — none of Admin's screens opt out via `customizable: false`. Logged here as Admin's own named requirement instance, not double-counted across phases. |
+
+### Upgraded but not fully closed (NOT IMPLEMENTED → PARTIALLY IMPLEMENTED)
+
+| Req ID | Was | Now | What's real vs. still missing |
+|---|---|---|---|
+| P5-33 | NOT IMPLEMENTED | **PARTIALLY IMPLEMENTED** | `employeesBody()` now renders a real illustrative employee roster (`DEFAULT_EMPLOYEES`) with working Offboard/Re-onboard toggle (persisted) and a Revoke Sessions action (explicitly labeled "prototype — no real session store," [admin.js:128-156](scripts/content/admin.js#L128-L156)). Performance and call-recording review are explicitly *not* built — the panel's own disclosure text states this is because "a per-employee record-ownership field not yet in the data model" would be required, and building it anyway "would mean fabricating attribution" ([admin.js:138](scripts/content/admin.js#L138)). Onboard/offboard half resolved; performance/recording half correctly left undone rather than faked. |
+| P5-34 | NOT IMPLEMENTED | **PARTIALLY IMPLEMENTED** | `allocationEngineBody()` now has a real rule editor — add a method+product rule via `#rule-add`, remove via `[data-rule]` — persisted to `twm-allocation-rules` ([admin.js:158-188](scripts/content/admin.js#L158-L188)). Bulk re-assign is explicitly disclosed as not wired, because "the lead record has no owner/employee-id field yet, so reassignment would have nothing real to change" ([admin.js:172](scripts/content/admin.js#L172)) — rule-authoring half resolved; bulk-reassign half correctly left undone rather than faked. |
+| P5-35 | NOT IMPLEMENTED | **PARTIALLY IMPLEMENTED** | `orgCrmBody()` now renders real org-wide counts and a real combined list of every lead and customer read from the same shared stores Employee writes to ([admin.js:200-211](scripts/content/admin.js#L200-L211)) — the "all leads/customers across employees" half is resolved. "Reassignment visibility" is not shown (no owning-employee field exists on a lead/customer record, the same data-model gap named in P5-34) — the panel's own footer text discloses this as "read-only oversight," so the gap is disclosed, not silently dropped. |
+
+### Confirmed still open (not falsely claimed resolved)
+
+| Req ID | Status | Why still open |
+|---|---|---|
+| P5-29 | PARTIALLY IMPLEMENTED (unchanged) | Command Centre's tile `onFocus` handlers still call `TwmRouter.navigate(...)` directly ([admin.js:109](scripts/content/admin.js#L109)) rather than `window.TwmSetFocus('focus', ...)` — tiles still deep-link straight to their destination screen instead of expanding in place with a 20%-dim rest-of-stage. The "Needs Your Attention" action strip still has no `onFocus` at all. This was not touched this session; it is a design-pattern choice (direct deep-link vs. in-place focus) rather than a simple wiring bug, and was left as a disclosed gap rather than guessed at. |
+| P5-30 | PARTIALLY IMPLEMENTED (unchanged) | The 2 tiles with a `panel` argument still reach Immersive mode showing the *generic* Signals Desk / System Health content, not a Command-Centre-specific review/approval flow — unchanged this session. |
+| P5-31 | PARTIALLY IMPLEMENTED (unchanged) | `moreScreen(panelId)` ([admin.js:414-436](scripts/content/admin.js#L414-L436)) still returns one flat Immersive panel per hub tile with no nested Overview/Focus state — same disclosed design simplification as Employee's P4-21 (`V2_REMAINING_WORK.md` item #19), unchanged this session. |
+
+### Updated Phase 5 completion
+
+Recounting all 36 applicable rows (the 2 explicitly-open Section I items remain excluded from the denominator, unchanged):
+
+- **WORKING: 30** (all of Section B's original 25, plus P5-26, P5-27, P5-32, P5-36, P5-28 — 5 newly resolved)
+- **IMPLEMENTED BUT NOT CONNECTED: 0**
+- **PARTIALLY IMPLEMENTED: 6** (P5-29, P5-30, P5-31 unchanged, plus P5-33, P5-34, P5-35 upgraded from NOT IMPLEMENTED to PARTIAL)
+- **NOT IMPLEMENTED: 0**
+
+**Phase 5 completion (post-remediation): 30/36 (≈83%)**, up from 25/36 (≈69%). Every item that moved, moved up — nothing regressed. The three items upgraded only to PARTIAL (P5-33, P5-34, P5-35) are each honestly disclosed in the code's own UI text as data-model-limited (no owner/employee-id field on a lead/customer record) rather than claimed fully WORKING — consistent with the mission's "never manufacture a 100% score" rule. The three remaining PARTIAL items (P5-29, P5-30, P5-31) are unchanged, disclosed design-pattern gaps, not regressions.

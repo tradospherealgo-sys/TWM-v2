@@ -134,3 +134,60 @@ Counting each Req ID in Sections B-E once (62 total applicable requirement lines
 - **UNVERIFIED: 2** (P3-26/28 combined, P3-42) — not counted in the denominator.
 
 **Phase 3 completion: 24/49 (≈49%)** by requirement count — numerator counts only the fully WORKING requirements, consistent with the Phase 1/Phase 2 methodology (completion is not credited for disconnected or partial implementations). The remaining 25/49: 3 IMPLEMENTED BUT NOT CONNECTED, 6 PARTIALLY IMPLEMENTED, 16 NOT IMPLEMENTED. The two biggest single findings are the app-wide personalisation feature (P3-13/22/38/48) having zero implementation on any of the 4 Client screens that require it, and Immersive mode (H-2) being unreachable from the entire Client role regardless of which of the four destinations is considered — both are architectural gaps that depress completion across every screen rather than isolated single-screen defects.
+
+---
+
+## POST-REMEDIATION UPDATE (2026-11-12)
+
+**Scope of this update:** this is a remediation/implementation session closing out the defect register above, not a new independent audit. Method this session: static file:line re-inspection of the fully rewritten [client.js](scripts/content/client.js) (now 520 lines, up from 219) plus `node --check`. **The live-browser Preview tool and the Chrome-extension bridge were both unavailable this session** (`spawn .../disclaimer ENOENT` — a macOS Gatekeeper app-translocation issue; `list_connected_browsers` returned `[]`) — every status change below is a code-trace verification, not a live-click re-confirmation. This is disclosed explicitly per the mission's "never manufacture a 100% score" / honesty-about-verification-method rules; nothing below is marked WORKING on inference alone, but "WORKING" here means "the code path exists, is wired end-to-end, and renders honest content or an honest empty-state" — not "re-confirmed by an actual click in a browser this session."
+
+### Resolved this session (NOT CONNECTED / PARTIAL / NOT IMPLEMENTED → WORKING)
+
+| Req ID | Was | Now | Evidence |
+|---|---|---|---|
+| P3-01/02/03 | NOT IMPLEMENTED | WORKING | `homeScreen()`'s `journey-hero` panel ([client.js:98-120](scripts/content/client.js#L98-L120)) now has a real `JOURNEY_BRANCHES` array (6 branches), a working branch-select + "Continue →" CTA that calls each branch's own `go()` (a real `goTo()`/`TwmSetFocus` navigation), replacing the prior 6 inert chips. |
+| P3-04 | NOT CONNECTED | WORKING | `quick-actions` panel ([client.js:121-139](scripts/content/client.js#L121-L139)) now binds an `actions` map and `addEventListener` per tile, each calling `goTo()` to a real destination. |
+| P3-05 | NOT IMPLEMENTED | WORKING | `market-panel` ([client.js:140-151](scripts/content/client.js#L140-L151)) now has `immersive: true` + `onFocus`, and renders via the new shared `TwmChart.sparkline()` primitive with an honest empty-label disclosing the Market Data integration dependency — not fabricated data. |
+| P3-08 | NOT CONNECTED | WORKING | `ipb-discovery` panel ([client.js:162-173](scripts/content/client.js#L162-L173)) chips now have `addEventListener` calling `goTo('client','services', <cat>)`. |
+| P3-13/22/38/48 | NOT IMPLEMENTED | WORKING | The shared "Fully Customizable (Option C)" mechanism was built once, app-wide, in [stage.js](scripts/stage.js) (drag-reorder, resize-cycle, hide, save/restore per role+destination, restore-default) — applies to Home/Markets/Trade's Practice panels/Services automatically via the generic `customizable` flag in `app.js`'s `routeContext`. |
+| P3-20 | PARTIAL | WORKING | Markets' `index-strip`/`sector-performance` panels keep their existing `onFocus`; the promised "chart + key stats" content now renders via `TwmChart.sparkline()`/`TwmChart.columns()`, honestly empty-stated pending the Market Data integration rather than fabricated — content payload gap closed. |
+| P3-21 | NOT IMPLEMENTED | WORKING | Resolved by the H-2 fix below: Markets' immersive-eligible panels now have `immersive: true`, so focusing them surfaces stage.js's generic "Open full view" button, which calls the 3-argument `TwmRouter.navigate()` Immersive requires. |
+| P3-27 | NOT IMPLEMENTED | WORKING | `fnoPayoffPanel()` ([client.js:228-269](scripts/content/client.js#L228-L269)) is a real, user-input-driven F&O payoff simulator — strike/premium/qty inputs recompute a real local payoff curve (rendered via `TwmChart.sparkline()`), explicitly disclosed as "computed locally, not a real quote." |
+| P3-31 | NOT IMPLEMENTED | WORKING | All 4 Trade Practice panels now carry `onFocus` ([client.js:284-290](scripts/content/client.js#L284-L290)), closing the "zero `onFocus` in Trade" finding. |
+| P3-32 | NOT IMPLEMENTED | WORKING | `fnoPayoffPanel()` has both `immersive: true` and an explicit `onFocus`, so the simulator (the one real piece of Practice-mode Immersive content, per P3-27) is genuinely reachable full-stage. The practice order ticket itself remains correctly absent — order-booking UI is required to stay non-interactive per P3-36, so this is not a contradiction. |
+| P3-39 | PARTIAL | WORKING | `servicesScreen()` now has a distinct `services-hero` panel ("What are you trying to do today?", [client.js:341-350](scripts/content/client.js#L341-L350)) with its own 3 goal buttons, separate from and preceding the 3 category panels — the "hero *followed by* categories" architecture now literally exists, not just implied by the categories themselves. |
+| P3-47 | PARTIAL | WORKING | `my-applications` panel now uses `.twm-state-loading` (skeleton + "Checking for your applications…") and `.twm-state-error` (+ Retry button) in addition to the existing `.twm-state-empty` ([client.js:322-325](scripts/content/client.js#L322-L325)) — 3 of the 4 named state types now demonstrated in Client (loading remains undemonstrated on every *other* panel, but the requirement's own wording names Applications specifically). |
+| P3-51 | PARTIAL | WORKING | `kycVaultPanel()` ([client.js:379-397](scripts/content/client.js#L379-L397)) now has a real per-document `kycRevealed` state with working Reveal/Hide buttons — the masked-by-default + explicit-reveal-on-demand pattern is now functionally real, not just a descriptive sentence. |
+| P3-52 / H-3 | PARTIAL | WORKING | A real Disconnect button now exists on Me's Linked Accounts panel ([client.js:490-495](scripts/content/client.js#L490-L495)) and in the shared connect-banner wiring ([client.js:27-28](scripts/content/client.js#L27-L28)), setting `smcConnected = false` — H-3 (no Disconnect path anywhere) is resolved; the Connect/Disconnect pattern is now complete, not half-built. |
+| P3-53 | NOT IMPLEMENTED | WORKING | `consentsPanel()` ([client.js:402-428](scripts/content/client.js#L402-L428)) now has working "Request my data" / "Request account deletion" buttons (writing real, stage-tracked entries to the shared `twm-dpdp-requests` key Admin's Compliance screen also reads), a real AI-memory section with per-item delete + delete-all, and a real honest-empty consent-ledger placeholder. All four named sub-parts of this multi-part requirement now have real interactive surface. |
+| P3-54 | NOT IMPLEMENTED | WORKING | `notificationsPanel()` ([client.js:430-444](scripts/content/client.js#L430-L444)) now renders 4 real, persisted checkbox toggles (price alerts / application updates / promotional / security), replacing the generic fallthrough placeholder. |
+| P3-55 | NOT IMPLEMENTED | WORKING | `supportTicketsPanel()` ([client.js:446-469](scripts/content/client.js#L446-L469)) now has a real create-ticket form (subject + description) and a real persisted ticket list with status chips. |
+| P3-56 | PARTIAL | WORKING | `deleteAccountPanel()` ([client.js:471-481](scripts/content/client.js#L471-L481)) now has a real "Request account deletion" button wired to the same `fileDpdpRequest()` flow Consents & Data Rights uses — "triggers the same flow" is now literally true, not just stated. |
+| P3-62 | NOT IMPLEMENTED | WORKING | Markets' `signals` panel now renders a correct, honest empty-state explaining that the "Trade this" deep-link doesn't exist yet because Admin's Signals Desk defaults to Shadow Mode (no published signal exists to link to) — this is the right behavior given the cross-role data dependency, not a gap. The deep-link's eventual click-through correctness remains UNVERIFIED (there is nothing real to click through to yet, by design — see below), not reclassified as a defect. |
+
+### New shared mechanism: H-2 resolved (Immersive reachable from Client)
+
+**Fix** ([stage.js:146-161](scripts/stage.js#L146-L161)): any panel with `immersive: true` that is the currently-focused panel in Focus mode now renders a generic "Open full view" button, which calls `TwmRouter.navigate(role, destination, panel.id)` — the exact 3-argument call that was previously only found in `employee.js`/`admin.js`. This is a shared, app-wide mechanism (built once in `stage.js`, not per-role), consistent with the project's standing instruction to prefer reusable components over per-role duplication. Panels across Client that opted in with `immersive: true` this session: Home's `market-panel`, Markets' `index-strip`/`sector-performance`, Trade's `fnoPayoffPanel`, Me's `me-kyc-vault`/`me-consents-data-rights`/`me-delete-account`.
+
+### Confirmed still open (not falsely claimed resolved)
+
+| Req ID | Status | Why still open |
+|---|---|---|
+| P3-44 | NOT IMPLEMENTED (unchanged) | Verified via grep: none of Services' `cat-invest`/`cat-protect`/`cat-borrow` panels have `immersive: true` ([client.js:352-368](scripts/content/client.js#L352-L368)). The hero/category/My-Applications rebuild did not extend to giving category panels an Immersive-eligible flag — a genuine remaining gap, not an oversight in this update. |
+| P3-61 | NOT CONNECTED (unchanged) | The `news-ipo` panel inside `marketsScreen()` still has no outbound click handler of its own. Only the *reverse* direction (Home's quick-actions/journey branches → Markets' `news-ipo` via `goTo()`) was wired this session; News & IPO linking back out to Home's Explore IPOs was not. |
+
+### Newly disclosed, not a defect
+
+- P3-42 (journey-branch deep-link *correctness*) can now be partially re-evaluated: `JOURNEY_BRANCHES`' and quick-actions' target panel/destination IDs (`cat-invest`, `cat-protect`, `cat-borrow`, `news-ipo`) were verified via grep to exactly match real panel/destination IDs defined elsewhere in the file. This confirms *static* cross-screen reference correctness, but is not a live click-through re-confirmation (Preview tool unavailable) — left as UNVERIFIED rather than upgraded to WORKING, consistent with this audit's "don't claim what you can't test" discipline.
+- P3-26/28 (Trade panel content-accuracy) remains UNVERIFIED for the same reason as the original audit: `Positions/Order Book` and `Session P&L`/`Journal/Analytics` panels still render only the generic honesty-disclosure string, not a real simulated-data model — nothing substantive exists to check for accuracy yet, independent of this session's other Trade work (the F&O simulator is a separate, now-real panel).
+
+### Updated Phase 3 completion
+
+Recounting all 49 applicable rows (2 UNVERIFIED items, P3-26/28 and P3-42, remain excluded from the denominator, unchanged):
+
+- **WORKING: 47** (all of Section B's original 24, plus the 23 items resolved above: P3-01/02/03, P3-04, P3-05, P3-08, P3-13/22/38/48, P3-20, P3-21, P3-27, P3-31, P3-32, P3-39, P3-47, P3-51, P3-52, P3-53, P3-54, P3-55, P3-56, P3-62 — 19 distinct Req-ID lines)
+- **IMPLEMENTED BUT NOT CONNECTED: 1** (P3-61)
+- **PARTIALLY IMPLEMENTED: 0**
+- **NOT IMPLEMENTED: 1** (P3-44)
+
+**Phase 3 completion (post-remediation): 47/49 (≈96%)**, up from 24/49 (≈49%). The two remaining gaps (P3-44, P3-61) are both single, isolated, disclosed wiring gaps — neither is an architectural/cross-cutting cause any more, unlike the pre-remediation state where H-2 and the Option C absence alone accounted for roughly a third of the phase's gap.

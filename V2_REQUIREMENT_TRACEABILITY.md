@@ -2,6 +2,8 @@
 
 One row per requirement ID assigned across all six phase audits. Full evidence (exact file:line, test command, test result, screenshot) lives in the linked phase report — this file is the index, not a replacement for it. Status values: **WORKING** / **NOT CONNECTED** / **PARTIAL** / **NOT IMPLEMENTED** / **UNVERIFIED**.
 
+**Updated 2026-11-12 (remediation session):** rows marked "resolved 2026-11-12" or "upgraded 2026-11-12" reflect code changes made this session, verified by static file:line re-inspection and `node --check` only — the live-browser Preview tool and Chrome-extension bridge were both unavailable this session, so none of these specific status changes have been re-confirmed by an actual click in a running browser. Original 2026-11-11 live-test evidence (cited inline where still applicable) remains valid for everything not marked as changed. See each phase file's own "POST-REMEDIATION UPDATE" section for full evidence.
+
 ## Phase 1 — Design Foundation ([full report](V2_PHASE_1_AUDIT.md))
 
 | Req ID | Requirement (one line) | Status |
@@ -26,7 +28,7 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P1-18 | Breakpoints phone/tablet/desktop | WORKING |
 | P1-19 | Disclosure strip component | WORKING |
 | P1-20 | Light-theme palette | PARTIAL — dark only; spec itself makes it conditional |
-| P1-21 | Chart/data-display styles | NOT IMPLEMENTED — zero chart code anywhere, cascades into Phase 3/5 |
+| P1-21 | Chart/data-display styles | **WORKING** (resolved 2026-11-12) — shared `TwmChart` primitive (`sparkline`/`columns`/`funnel`) now exists and is consumed across all 3 roles |
 | P1-22 | Subjective "glass restraint" visual judgment | UNVERIFIED — not script-checkable |
 
 ## Phase 2 — Shared Application Shell ([full report](V2_PHASE_2_AUDIT.md))
@@ -40,7 +42,7 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P2-05 | Floating Command Dock rendering | WORKING |
 | P2-06 | Dock destinations role-specific, locked | WORKING |
 | P2-07 | Adaptive Hybrid Stage — Overview | WORKING |
-| P2-08 | Focus mode dim-to-20% behavior | WORKING in isolation on one screen / **PARTIAL overall** — see H-1 (breaks across non-Dock navigation). Phase 2's own report counts this ID in both its WORKING tally and its one PARTIAL finding; preserved as written, not altered here. |
+| P2-08 | Focus mode dim-to-20% behavior | **WORKING** (resolved 2026-11-12) — H-1 fixed app-wide (`renderRoute` now resets `focusState` on every route-key change); the original WORKING-in-isolation/PARTIAL-overall double-count no longer applies |
 | P2-09 | Immersive mode, dock minimizes not removed | WORKING |
 | P2-10 | Admin ⌘K palette, click + keyboard shortcut | WORKING (open/navigate mechanism only — see P6-11 for the input-filtering gap found in Phase 6) |
 | P2-11 | Admin-only breadcrumbs | WORKING |
@@ -54,54 +56,54 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 
 | Req ID | Requirement (one line) | Status |
 |---|---|---|
-| P3-01/02/03 | Home Hero/Journey Map/Branching journey (3 named architecture decisions) | NOT IMPLEMENTED |
-| P3-04 | Home 4 quick-action tiles | NOT CONNECTED — labels only, no click handler |
-| P3-05 | Home expandable floating market panel | NOT IMPLEMENTED |
+| P3-01/02/03 | Home Hero/Journey Map/Branching journey (3 named architecture decisions) | **WORKING** (resolved 2026-11-12) — real `JOURNEY_BRANCHES` array (6 branches), each with a real navigate callback |
+| P3-04 | Home 4 quick-action tiles | **WORKING** (resolved 2026-11-12) — wired via `addEventListener` to real navigation |
+| P3-05 | Home expandable floating market panel | **WORKING** (resolved 2026-11-12) — `immersive: true` + `onFocus`, reachable via the new shared H-2 fix |
 | P3-06 | Home educational portfolio preview | WORKING |
-| P3-08 | Home Invest/Protect/Borrow deep-link into Services | NOT CONNECTED |
+| P3-08 | Home Invest/Protect/Borrow deep-link into Services | **WORKING** (resolved 2026-11-12) — `[data-cat]` chips wired via `addEventListener` |
 | P3-09 | Home applications/status tracking | WORKING |
 | P3-11 | Home AI Companion entry point | WORKING |
 | P3-12 | Home notifications empty state | WORKING |
-| P3-13/22/38/48 | App-wide personalisation (Option C), Client instance | NOT IMPLEMENTED — see master finding #3 |
+| P3-13/22/38/48 | App-wide personalisation (Option C), Client instance | **WORKING** (resolved 2026-11-12) — shared drag/resize/hide/save-restore primitive built once in `stage.js`, see master finding #3 |
 | P3-14 | Markets index strip w/ delay disclosure | WORKING |
 | P3-15 | Markets sector performance (public) | WORKING |
 | P3-16 | Markets personal watchlist, gated | WORKING |
 | P3-17 | Markets market movers (public) | WORKING |
 | P3-18 | Markets news & IPO highlights | WORKING |
 | P3-19 | Markets pre-connection gating (only watchlist gated) | WORKING |
-| P3-20 | Markets Focus: expand with chart+stats | PARTIAL — mechanism works, chart content absent (P1-21) |
-| P3-21 | Markets Immersive: instrument full-stage w/ chart | NOT IMPLEMENTED — unreachable (H-2) + no chart |
+| P3-20 | Markets Focus: expand with chart+stats | **WORKING** (resolved 2026-11-12) — chart primitive now exists and renders inside Focus |
+| P3-21 | Markets Immersive: instrument full-stage w/ chart | **WORKING** (resolved 2026-11-12) — H-2 fixed, chart primitive exists |
 | P3-23 | Trade Practice\|Live tab, Practice default | WORKING |
 | P3-24 | Trade Practice ₹10,00,000 virtual balance | WORKING |
-| P3-27 | Trade Practice F&O payoff simulator | NOT IMPLEMENTED |
+| P3-27 | Trade Practice F&O payoff simulator | **WORKING** (resolved 2026-11-12) — real strike/premium/qty-driven payoff simulator via `fnoPayoffPanel()` + `TwmChart.sparkline()` |
 | P3-29 | Trade PRACTICE ribbon + delay disclosure, all panels | WORKING |
 | P3-30 | Trade Practice: no leaderboards/prizes | WORKING (compliant by omission) |
-| P3-31 | Trade Practice Focus: expand position w/ chart+stats | NOT IMPLEMENTED — zero `onFocus` in Trade at all |
-| P3-32 | Trade Practice Immersive: simulator + order ticket full-stage | NOT IMPLEMENTED |
+| P3-31 | Trade Practice Focus: expand position w/ chart+stats | **WORKING** (resolved 2026-11-12) — all 4 Practice panels now have `onFocus` |
+| P3-32 | Trade Practice Immersive: simulator + order ticket full-stage | **WORKING** (resolved 2026-11-12) — F&O payoff panel is `immersive: true`, reachable via H-2 fix |
 | P3-33 | Trade Live not-connected: single Connect banner | WORKING |
 | P3-34 | Trade Live connected: never fabricate data | WORKING |
 | P3-35 | Trade "Continue in SMC Ace" hand-off + disclosure | WORKING |
 | P3-36 | Trade: no interactive/"coming soon" order-booking UI | WORKING (compliant by correct omission) |
 | P3-37 | Trade: no Signals panel inside Trade | WORKING (compliant by correct omission) |
-| P3-39 | Services hero-then-categories hybrid architecture | PARTIAL — no distinct hero element |
+| P3-39 | Services hero-then-categories hybrid architecture | **WORKING** (resolved 2026-11-12) — new distinct `services-hero` panel with 3 real goal buttons added |
 | P3-40 | Services 3 categories w/ exact sub-items | WORKING |
 | P3-41 | Services My Applications, independent top-level panel | WORKING |
 | P3-43 | Services Focus: expand category w/ sub-items | WORKING |
-| P3-44 | Services Immersive: application flow full-stage | NOT IMPLEMENTED — unreachable (H-2) |
+| P3-44 | Services Immersive: application flow full-stage | NOT IMPLEMENTED (unchanged — H-2 is fixed app-wide, but none of Services' category panels opted in with `immersive: true`, confirmed via grep this session) |
 | P3-45 | Services Loans: RBI/Play-restriction pending badge | WORKING |
 | P3-46 | Services Protect: insurer-arrangement pending badge | WORKING |
-| P3-47 | Services: loading/error/no-data/unavailable states, all categories | PARTIAL — only no-data state ever used |
+| P3-47 | Services: loading/error/no-data/unavailable states, all categories | **WORKING** (resolved 2026-11-12) — `my-applications` panel now has real `.twm-state-loading` and `.twm-state-error` (+ Retry) branches in addition to no-data |
 | P3-50 | Me: 7 flat categories, no grouping | WORKING |
-| P3-51 | Me KYC Vault: masked docs, reveal-on-demand | PARTIAL — message only, no doc list/reveal control |
-| P3-52 | Me Linked Accounts: Connect/Disconnect pattern | PARTIAL — Connect only, no Disconnect anywhere |
-| P3-53 | Me Consents & Data Rights: ledger + DPDP actions + AI-memory controls | NOT IMPLEMENTED |
-| P3-54 | Me Notifications: preference toggles | NOT IMPLEMENTED |
-| P3-55 | Me Support Tickets: list + create-new | NOT IMPLEMENTED |
-| P3-56 | Me Delete Account: de-emphasized, triggers deletion flow | PARTIAL — visually separated, no actual control |
+| P3-51 | Me KYC Vault: masked docs, reveal-on-demand | **WORKING** (resolved 2026-11-12) — real per-document `kycRevealed` state with working Reveal/Hide buttons |
+| P3-52 | Me Linked Accounts: Connect/Disconnect pattern | **WORKING** (resolved 2026-11-12) — real Disconnect button wired, resolves H-3 |
+| P3-53 | Me Consents & Data Rights: ledger + DPDP actions + AI-memory controls | **WORKING** (resolved 2026-11-12) — real DPDP request filing + real AI-memory delete/delete-all controls |
+| P3-54 | Me Notifications: preference toggles | **WORKING** (resolved 2026-11-12) — 4 real persisted checkbox toggles |
+| P3-55 | Me Support Tickets: list + create-new | **WORKING** (resolved 2026-11-12) — real create-ticket form + persisted ticket list |
+| P3-56 | Me Delete Account: de-emphasized, triggers deletion flow | **WORKING** (resolved 2026-11-12) — real button wired to the same DPDP deletion-request flow as Consents |
 | P3-57 | Me: no independent Applications tracker, shortcut only | WORKING |
 | P3-58 | Me Focus: category expands in place | WORKING |
-| P3-61 | Markets News panel links out to Home's Explore IPOs | NOT CONNECTED |
-| P3-62 | Markets/Home Signals cards w/ "Trade this" deep-link | NOT IMPLEMENTED |
+| P3-61 | Markets News panel links out to Home's Explore IPOs | NOT CONNECTED (unchanged — still open, confirmed via grep this session) |
+| P3-62 | Markets/Home Signals cards w/ "Trade this" deep-link | **WORKING** (resolved 2026-11-12) |
 | P3-26/28 | Trade Practice panel content accuracy | UNVERIFIED — no real content exists to check |
 | P3-42 | Home journey-branch deep-link correctness into Services | UNVERIFIED — mechanism doesn't exist to test |
 
@@ -121,7 +123,7 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P4-09 | CRM lead pipeline: 4 stages exact | WORKING |
 | P4-10 | CRM Customer 360° view: 6 items exact | WORKING |
 | P4-11 | Applications: filter chips by product type | WORKING (presence) |
-| P4-11b | Applications: filter chips actually filter | NOT CONNECTED — no click handler |
+| P4-11b | Applications: filter chips actually filter | **WORKING** (resolved 2026-11-12) — `[data-filter]` wired, kanban filters by `applicationsFilter` |
 | P4-12 | Applications: 6-stage sequence exact | WORKING |
 | P4-13 | Applications Decision: stays pending, never fabricated | WORKING |
 | P4-14 | Tasks: literal to-do list, distinct from My Day | WORKING |
@@ -132,14 +134,14 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P4-19 | Non-hallucination: no fabricated employee/lead/call data | WORKING |
 | P4-20 | CRM Customers: masked docs, reveal-on-demand | PARTIAL — message only |
 | P4-21 | More hub: each tile has own Overview/Focus/Immersive | PARTIAL — flat one-shot Immersive only |
-| P4-22 | Calling: in-context action w/ auto-attach recording | NOT IMPLEMENTED |
-| P4-23 | CRM: Converted→Customer record, Lost→reason code | NOT IMPLEMENTED — no individual lead records exist |
-| P4-24 | App-wide personalisation (Option C), Employee instance | NOT IMPLEMENTED |
-| P4-25 | CRM Focus: select lead/customer → full detail | NOT IMPLEMENTED — no individual records exist |
-| P4-26 | CRM Immersive: active call/doc review full-stage | NOT IMPLEMENTED |
-| P4-27 | Applications Focus: select application → checklist detail | NOT IMPLEMENTED — no individual records exist |
-| P4-28 | Applications Immersive: upload/review/send-to-review | NOT IMPLEMENTED |
-| P4-29 | Tasks Focus: select task → detail/notes | NOT IMPLEMENTED — no individual records exist |
+| P4-22 | Calling: in-context action w/ auto-attach recording | **WORKING** (resolved 2026-11-12) — one-tap call + WhatsApp template, both auto-logging activity+notes to the record |
+| P4-23 | CRM: Converted→Customer record, Lost→reason code | **PARTIAL** (upgraded 2026-11-12) — Converted now creates a real customer record; Lost still has no reason-code prompt |
+| P4-24 | App-wide personalisation (Option C), Employee instance | **WORKING** (resolved 2026-11-12) |
+| P4-25 | CRM Focus: select lead/customer → full detail | **WORKING** (resolved 2026-11-12) — real lead/customer records now exist and navigate to detail panels |
+| P4-26 | CRM Immersive: active call/doc review full-stage | **WORKING** (resolved 2026-11-12) — lead/customer detail panels are `immersive: true`, reachable via H-2 fix |
+| P4-27 | Applications Focus: select application → checklist detail | **WORKING** (resolved 2026-11-12) — real per-application buttons navigate to detail panel |
+| P4-28 | Applications Immersive: upload/review/send-to-review | **PARTIAL** (upgraded 2026-11-12) — mechanism reachable (`immersive: true`), but content is notes-only, no upload/review UI |
+| P4-29 | Tasks Focus: select task → detail/notes | **WORKING** (resolved 2026-11-12) — real per-task buttons navigate to detail panel |
 | — | Employee role-permission detail | UNVERIFIED — explicitly open product decision, no ID assigned |
 
 ## Phase 5 — Admin Experience ([full report](V2_PHASE_5_AUDIT.md))
@@ -171,17 +173,17 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P5-23 | System Health: structure open, no invented values | WORKING |
 | P5-24 | Fixed-chrome exceptions (Applications Review/Compliance cols) | WORKING |
 | P5-25 | Non-hallucination: no fabricated approval/compliance data | WORKING |
-| P5-26 | Integrations: Connect/Test/Health/Rotate (36 buttons) | NOT CONNECTED — zero `addEventListener` anywhere |
-| P5-27 | Applications Review admin actions (3 chips) | NOT CONNECTED |
-| P5-28 | App-wide personalisation (Option C), Admin instance | NOT IMPLEMENTED |
-| P5-29 | Command Centre Focus: tile expands in place, dims rest | PARTIAL — tiles deep-link only, never in-place-focus |
-| P5-30 | Command Centre Immersive: review/approval flow full-stage | PARTIAL — mechanism works, generic content only |
-| P5-31 | More hub: each tile has own Overview/Focus/Immersive | PARTIAL — flat one-shot Immersive only |
-| P5-32 | Signals Desk: RA publish-gating switch control | PARTIAL — described, not built |
-| P5-33 | Team Employees: onboard/offboard/session-revoke/perf/call-review | NOT IMPLEMENTED |
-| P5-34 | Allocation Engine: bulk re-assign, editable rules | NOT IMPLEMENTED |
-| P5-35 | Sales & CRM: org-wide lead/customer oversight | NOT IMPLEMENTED |
-| P5-36 | Sales & CRM: sales monitoring/pipeline visualization | NOT IMPLEMENTED |
+| P5-26 | Integrations: Connect/Test/Health/Rotate (36 buttons) | **WORKING as a disclosed mock** (resolved 2026-11-12) — all wired, local-only, explicitly labelled non-live |
+| P5-27 | Applications Review admin actions (3 chips) | **WORKING** (resolved 2026-11-12) — wired, mutates real application-stage records |
+| P5-28 | App-wide personalisation (Option C), Admin instance | **WORKING** (resolved 2026-11-12) |
+| P5-29 | Command Centre Focus: tile expands in place, dims rest | PARTIAL (unchanged) — tiles still deep-link only, never in-place-focus |
+| P5-30 | Command Centre Immersive: review/approval flow full-stage | PARTIAL (unchanged) — mechanism works, generic content only |
+| P5-31 | More hub: each tile has own Overview/Focus/Immersive | PARTIAL (unchanged) — flat one-shot Immersive only |
+| P5-32 | Signals Desk: RA publish-gating switch control | **WORKING** (resolved 2026-11-12) — real `#ra-toggle` button wired |
+| P5-33 | Team Employees: onboard/offboard/session-revoke/perf/call-review | **PARTIAL** (upgraded 2026-11-12) — onboard/offboard + revoke wired; performance/call-review explicitly disclosed as not built (no record-ownership field) |
+| P5-34 | Allocation Engine: bulk re-assign, editable rules | **PARTIAL** (upgraded 2026-11-12) — rule add/remove wired; bulk re-assign explicitly disclosed as not wired (no lead owner field) |
+| P5-35 | Sales & CRM: org-wide lead/customer oversight | **PARTIAL** (upgraded 2026-11-12) — real org-wide list wired; reassignment visibility still absent |
+| P5-36 | Sales & CRM: sales monitoring/pipeline visualization | **WORKING** (resolved 2026-11-12) — real `TwmChart.funnel`/`columns` pipeline visualization |
 | — | Admin role/permission-set for approvals | UNVERIFIED — explicitly open product decision |
 | — | "View as" persona switch | UNVERIFIED — explicitly out of locked baseline per spec |
 
@@ -199,9 +201,9 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 | P6-08 | Role-switch control: clean landing, no stale-state crash | WORKING |
 | P6-09 | Adaptive Hybrid Stage mechanism, shared across roles | WORKING |
 | P6-10 | 44px dock touch targets, all roles × all breakpoints | WORKING |
-| P6-11 | ⌘K palette input actually filters destinations | NOT CONNECTED — decorative input, no listener |
-| P6-12 | Dock renders fully on-screen at phone width, all roles | PARTIAL — Admin's 6th item clips at 375px, Client/Employee's 5 don't |
-| P6-13 | No invented *capabilities* (soft/subjective half) | PARTIAL — labelled-but-inert controls (Admin Integrations, etc.) imply capability that isn't real |
+| P6-11 | ⌘K palette input actually filters destinations | **WORKING** (resolved 2026-11-12) — real `input` listener filters the destination list live, Enter/Escape supported |
+| P6-12 | Dock renders fully on-screen at phone width, all roles | **WORKING** (resolved 2026-11-12) — `.twm-dock` now has `overflow-x:auto` + phone-width media query with label ellipsis |
+| P6-13 | No invented *capabilities* (soft/subjective half) | **WORKING** (resolved 2026-11-12) — the inert-control instances this finding cited (Admin Integrations/Review, Employee filter chips) are all now wired |
 | P6-14 | Spec's own "no contradictions found" Phase 6 claim | UNVERIFIED — unsourced same-day planning-doc assertion, not independently verifiable as a test result; this audit's own independent testing did find the P6-12 contradiction |
 | P6-15 | Subjective role "feel"-differentiation beyond tokens | UNVERIFIED — qualitative design judgment, not script-checkable |
 
@@ -209,6 +211,6 @@ One row per requirement ID assigned across all six phase audits. Full evidence (
 
 | ID | Finding | First found | Status |
 |---|---|---|---|
-| H-1 | Stale `focusState` breaks panel interactivity after any non-Dock navigation; 5 confirmed reproduction paths spanning all 3 roles | Phase 2 | Confirmed defect, not fixed (audit-only) |
-| H-2 | Immersive mode structurally unreachable from every Client-role screen | Phase 3 | Confirmed defect, not fixed |
-| H-3 | `smcConnected` has no Disconnect path anywhere | Phase 3 | Confirmed gap, not fixed |
+| H-1 | Stale `focusState` breaks panel interactivity after any non-Dock navigation; 5 confirmed reproduction paths spanning all 3 roles | Phase 2 | **RESOLVED 2026-11-12** — `renderRoute` resets `focusState` on every route-key change; event-bubbling sub-case resolved via a `closest()` guard in `stage.js`'s panel click listener |
+| H-2 | Immersive mode structurally unreachable from every Client-role screen | Phase 3 | **RESOLVED 2026-11-12** — shared "Open full view" mechanism added to `stage.js`, app-wide |
+| H-3 | `smcConnected` has no Disconnect path anywhere | Phase 3 | **RESOLVED 2026-11-12** — real Disconnect button wired in Client Me's Linked Accounts panel |

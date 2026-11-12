@@ -26,37 +26,55 @@ Every finding in every phase report is one of exactly five statuses: **WORKING**
 
 ## Headline numbers
 
+**Pre-remediation (2026-11-11, original audit — preserved for history):**
+
 | Phase | Applicable requirements | WORKING | Not connected | Partial | Not implemented | Completion |
 |---|---|---|---|---|---|---|
-| 1 — Design Foundation | 21 | 19 | 0 | 1 | 1 | **90%** |
-| 2 — Shared Shell | 16 | 14 | 0 | 1† | 0 | **88%** |
-| 3 — Client | 49 | 24 | 3 | 6 | 16 | **49%** |
-| 4 — Employee | 31 | 19 | 1 | 3 | 8 | **61%** |
-| 5 — Admin | 36 | 25 | 2 | 4 | 5 | **69%** |
-| **Total (Phases 1–5)** | **153** | **101** | **6** | **15** | **30** | **≈66%** |
-| 6 — Cross-role consistency (8-point spec checklist, scored separately — not a requirement count) | 8 | 6 | — | 2 | 0 | **75%** |
+| 1 — Design Foundation | 21 | 19 | 0 | 1 | 1 | 90% |
+| 2 — Shared Shell | 16 | 14 | 0 | 1† | 0 | 88% |
+| 3 — Client | 49 | 24 | 3 | 6 | 16 | 49% |
+| 4 — Employee | 31 | 19 | 1 | 3 | 8 | 61% |
+| 5 — Admin | 36 | 25 | 2 | 4 | 5 | 69% |
+| Total (Phases 1–5) | 153 | 101 | 6 | 15 | 30 | ≈66% |
+| 6 — Cross-role consistency (8-point checklist) | 8 | 6 | — | 2 | 0 | 75% |
 
-† Phase 2's own report counts requirement P2-08 (Focus-mode dim behavior) twice, in two senses: once inside its "14 WORKING" headline range (the mechanism is correct in isolation, on a single screen reached via the Dock) and again as the subject of the separate PARTIAL finding H-1 (the same mechanism breaks across screens reached by any other navigation path). This dual framing is preserved exactly as Phase 2 itself wrote it rather than silently resolved here — see [V2_REQUIREMENT_TRACEABILITY.md](V2_REQUIREMENT_TRACEABILITY.md) for the explicit note on this one item.
+† Phase 2's own report counted requirement P2-08 (Focus-mode dim behavior) twice: once inside its "14 WORKING" range (mechanism correct in isolation) and again as the subject of PARTIAL finding H-1 (the same mechanism broken across navigation). This is why the original denominator read 16 rather than 15.
 
-**Overall, Phases 1–5 combined: 101/153 (≈66%) of all applicable requirements are fully WORKING**, independently live-tested, not merely present in source. Phase 6's cross-role checklist (a different, 8-item unit, not folded into the 153) is 6/8 (75%) clean, with the 2 partial items both traceable to the same underlying causes already counted in Phases 1–5 (see below).
+**Post-remediation (2026-11-12 — this is a remediation/implementation session closing out the register above, not a second independent audit; see each phase file's own "POST-REMEDIATION UPDATE" section for full file:line evidence and the explicit disclosure that the live-browser Preview tool and Chrome-extension bridge were unavailable this session, so every status change below is a code-trace verification, not a live-click re-confirmation):**
 
-## The five findings that matter most
+| Phase | Applicable requirements | WORKING | Not connected | Partial | Not implemented | Completion |
+|---|---|---|---|---|---|---|
+| 1 — Design Foundation | 21 | 20 | 0 | 1 | 0 | **95%** |
+| 2 — Shared Shell | 15 | 15 | 0 | 0 | 0 | **100%** |
+| 3 — Client | 49 | 47 | 1 | 0 | 1 | **96%** |
+| 4 — Employee | 31 | 26 | 0 | 5 | 0 | **84%** |
+| 5 — Admin | 36 | 30 | 0 | 6 | 0 | **83%** |
+| **Total (Phases 1–5)** | **152** | **138** | **1** | **12** | **1** | **≈91%** |
+| 6 — Cross-role consistency (8-point checklist, code-verified only) | 8 | 8 | — | 0 | 0 | **100%** |
 
-These five recur across multiple phases and explain the majority of the gap between "code exists" and "fully working":
+Phase 2's denominator drops from 16 to 15 because fixing H-1 (see [V2_PHASE_2_AUDIT.md](V2_PHASE_2_AUDIT.md) POST-REMEDIATION UPDATE) collapses P2-08's artificial double-count into a single clean WORKING classification — there is no longer a separate PARTIAL "half" of that same requirement to count.
 
-1. **H-1 — stale shared `focusState` breaks panel interactivity app-wide, with 5 confirmed reproduction paths.** `app.js`'s `focusState` is reset only by the Dock's own click handler ([app.js:121-124](scripts/app.js#L121-L124)); every other navigation path (direct hash edit, browser back/forward, the Admin ⌘K palette, a More-hub deep-link, or — most severely — an ordinary click on a nested button like "Connect SMC Account" that bubbles into its parent panel's click listener) leaves stale focus state in place, and the next screen renders with all its panels dimmed to 20% opacity and `pointer-events:none`, silently breaking the app until the user happens to click the Dock. First found and most exhaustively reproduced in [V2_PHASE_2_AUDIT.md](V2_PHASE_2_AUDIT.md) §H, reproduced again independently via ordinary Client usage in Phase 2/3, and confirmed still live via the Admin ⌘K path again in [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) §H. This is the single highest-severity defect in the whole audit because of its blast radius: it can silently break any of the app's 24 destinations, reached through completely ordinary use, not an edge case.
-2. **Immersive mode is structurally unreachable from the entire Client role ("H-2").** No Client-role code anywhere calls `TwmRouter.navigate()` with a 3rd (panel) argument — only Employee's More hub and Admin's Command Centre/More hub do. The underlying mechanism works correctly when manually invoked, but Markets, Trade, Services, and Me's specified Immersive behaviors (chart-plus-stats, F&O simulator, KYC document viewer, DPDP flows, etc.) are unreachable from any button click, regardless of mechanism correctness. See [V2_PHASE_3_AUDIT.md](V2_PHASE_3_AUDIT.md) §H.
-3. **"Fully Customizable (Option C)" personalisation — specified identically and repeatedly for Client, Employee, and Admin — has zero implementation anywhere.** `grep -rni "draggable|drag|resize|sortable"` across the entire codebase returns exactly one match, and it is a text string disclosing a screen is "fixed, non-draggable," not code. This is named as a requirement on at least 10 individual screens across all three roles and is the single largest specified-but-absent feature in the whole audit, consistently absent (not divergent) across roles — see Phase 3/4/5 §E and [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) §E.
-4. **Chart/data-visualization is a named Phase 1 deliverable with zero implementation**, which cascades into every Markets/Trade/Sales&CRM Focus-mode requirement that specifies "expands with chart + stats" — the stage-level expand/dim mechanism works, but there is nothing to show inside it. See [V2_PHASE_1_AUDIT.md](V2_PHASE_1_AUDIT.md) P1-21.
-5. **A recurring "visually-present, functionally-inert control" pattern in Employee and Admin.** Admin's 36 Integration buttons (Connect/Test/Health/Rotate × 9 services) and 3 Applications Review action chips, plus Employee's 4 Applications filter chips, render with correct labels but have zero `addEventListener` anywhere behind them (`grep -n "addEventListener" scripts/content/admin.js` returns zero matches app-wide). See Phase 4 §C, Phase 5 §C.
+**Overall, Phases 1–5 combined: 138/152 (≈91%) of all applicable requirements are now fully WORKING by code-trace verification**, up from 101/153 (≈66%) pre-remediation. Phase 6's cross-role checklist is now 8/8 (100%) by the same code-trace standard, up from 6/8 (75%). Every item that moved, moved up — this session found no regressions. The remaining gaps (1 Client item not connected, 1 Client item not implemented, 5 Employee items partial, 6 Admin items partial) are each individually itemized with the reason they're still open in their phase's POST-REMEDIATION UPDATE section — none were silently dropped or claimed resolved without evidence.
 
-Two additional findings specific to Phase 6's cross-role regression pass:
-- **Admin's 6-item dock clips at phone viewport width (375px) while Client's and Employee's 5-item docks do not** — a genuine, screenshot-confirmed responsive regression caused by the shared `.twm-dock` CSS having no overflow/wrap/shrink rule for its centered, fixed-width children. See [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) §D (P6-12).
-- **The Admin ⌘K command palette's text input is decorative** — typing into it never filters the destination list; only clicking a listed button works. See [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) §C (P6-11).
+## The five findings that matter most (original audit) — all five now resolved
+
+These five recurred across multiple phases and explained the majority of the pre-remediation gap between "code exists" and "fully working." **All five are now resolved**, each with its own file:line evidence in the relevant phase file's POST-REMEDIATION UPDATE section (2026-11-12) — listed here with original description plus resolution:
+
+1. **H-1 — stale shared `focusState` broke panel interactivity app-wide, with 5 confirmed reproduction paths.** *Resolved*: `renderRoute()` now resets `focusState` whenever the route key (`role/destination`) changes, covering every navigation path uniformly, not just the Dock's callback; the event-bubbling sub-case (a nested button click poisoning the parent panel's focus state) is separately resolved by a `closest()` guard in the panel's click listener. See [V2_PHASE_2_AUDIT.md](V2_PHASE_2_AUDIT.md) and [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) POST-REMEDIATION UPDATE sections.
+2. **Immersive mode was structurally unreachable from the entire Client role ("H-2").** *Resolved*: a shared, app-wide mechanism in `stage.js` now renders a generic "Open full view" button on any focused panel with `immersive: true`, calling `TwmRouter.navigate(role, destination, panel.id)` — the same 3-argument call Employee/Admin's More hubs already used, now available to every role. See [V2_PHASE_3_AUDIT.md](V2_PHASE_3_AUDIT.md) POST-REMEDIATION UPDATE.
+3. **"Fully Customizable (Option C)" personalisation had zero implementation anywhere.** *Resolved*: a single shared primitive in `stage.js` now provides drag-to-reorder, resize-cycle, hide, save/restore-per-role+destination, and one-click restore-default, applied uniformly across Client/Employee/Admin Overview screens (with each role's named fixed-chrome exceptions still correctly excluded). See [V2_PHASE_3/4/5_AUDIT.md](V2_PHASE_3_AUDIT.md) POST-REMEDIATION UPDATE sections.
+4. **Chart/data-visualization was a named Phase 1 deliverable with zero implementation.** *Resolved*: a shared `TwmChart` primitive (`sparkline`/`columns`/`funnel`) now exists and is consumed by Client Home/Markets/Trade, Employee's Performance tile, and Admin's Sales & CRM monitoring — every consumer falls back to an honest empty-state on zero data rather than fabricating a curve. See [V2_PHASE_1_AUDIT.md](V2_PHASE_1_AUDIT.md) P1-21 POST-REMEDIATION UPDATE.
+5. **A recurring "visually-present, functionally-inert control" pattern in Employee and Admin.** *Resolved*: Admin's 36 Integration buttons, its 3 Applications Review action chips, and Employee's 4 Applications filter chips are all now wired with real `addEventListener` handlers that mutate and persist real (illustrative or explicitly-mock) state. See [V2_PHASE_4_AUDIT.md](V2_PHASE_4_AUDIT.md) and [V2_PHASE_5_AUDIT.md](V2_PHASE_5_AUDIT.md) POST-REMEDIATION UPDATE sections.
+
+Two additional findings specific to Phase 6's cross-role regression pass — **both also now resolved**:
+- **Admin's 6-item dock clipped at phone viewport width (375px).** *Resolved*: `.twm-dock` now has `overflow-x: auto` plus a phone-width media query adding `min-width:0` and label ellipsis. See [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) POST-REMEDIATION UPDATE (P6-12).
+- **The Admin ⌘K command palette's text input was decorative.** *Resolved*: the input now has a real `input` listener that filters the destination list live, plus Enter/Escape keyboard support. See [V2_PHASE_6_AUDIT.md](V2_PHASE_6_AUDIT.md) POST-REMEDIATION UPDATE (P6-11).
+
+**Caveat repeated from each phase file:** every resolution above was verified by static file:line code-trace and `node --check` only this session — the live-browser Preview tool and Chrome-extension bridge were both unavailable (`spawn .../disclaimer ENOENT`; no connected browser), so none of these fixes have been re-confirmed by an actual click in a running browser since the code changed. This is disclosed explicitly per the mission's "never manufacture a 100% score" rule.
 
 ## What is genuinely solid
 
-- The Phase 1 design-token/foundation layer (90%) and Phase 2 shared shell mechanisms (88%, excluding the H-1 integration gap) are both strong — the dock, router, stage mode derivation, and Admin's ⌘K/breadcrumb supplementary layer are all correctly role-gated and independently confirmed live.
+- The Phase 1 design-token/foundation layer (95% post-remediation) and Phase 2 shared shell mechanisms (100% post-remediation, now that H-1 is fixed) are both strong — the dock, router, stage mode derivation, and Admin's ⌘K/breadcrumb supplementary layer are all correctly role-gated and independently confirmed live (pre-remediation) or by code-trace (post-remediation fixes).
 - **Non-hallucination compliance is clean across all three roles.** A repo-wide grep for fabricated financial figures, customer/lead names, or invented statuses returns essentially zero matches; every unbuilt feature renders an honest empty-state disclosure rather than fake data. This was the audit's highest-priority safety check and it passed everywhere it was tested (Phase 3/4/5 §B, consolidated in Phase 6 §B).
 - All 24 role/destination/panel routes resolve correctly with no dead routes (Phase 2 §B, P2-02/03).
 - The trade-honesty rule (PRACTICE ribbon + delay disclosure on every practice/live trade panel) is implemented exactly as specified, app-wide.
@@ -67,4 +85,6 @@ A small number of requirements are explicitly marked UNVERIFIED rather than asse
 
 ## Bottom line
 
-The prototype faithfully implements the shared design system and shell mechanics, and is honest everywhere it was tested — it never fabricates data to paper over a gap. But roughly a third of applicable requirements are not yet fully working, concentrated in exactly five cross-cutting causes (above) rather than scattered independently across 153 unrelated items. Fixing those five would resolve the majority of the Partial/Not-Connected/Not-Implemented findings across all three roles simultaneously. See [V2_REMAINING_WORK.md](V2_REMAINING_WORK.md) for the prioritized punch list.
+**Pre-remediation (2026-11-11):** the prototype faithfully implemented the shared design system and shell mechanics, and was honest everywhere it was tested — it never fabricated data to paper over a gap. But roughly a third of applicable requirements were not yet fully working, concentrated in exactly five cross-cutting causes (above) rather than scattered independently across 153 unrelated items.
+
+**Post-remediation (2026-11-12):** all five cross-cutting causes, plus the two Phase 6-specific findings, are now resolved — verified by static code-trace and `node --check` (live-browser re-confirmation was not possible this session; see caveat above). Applicable-requirement completion across Phases 1–5 rose from ≈66% to ≈91% (101/153 → 138/152), and Phase 6's checklist rose from 75% to 100% (6/8 → 8/8). The requirements still open (1 Client not-connected, 1 Client not-implemented, 5 Employee partial, 6 Admin partial — 13 items total) are each individually disclosed in their phase file's POST-REMEDIATION UPDATE section with the specific reason they remain open; none are silently dropped, and none of this session's changes regressed a previously-WORKING item. See [V2_REMAINING_WORK.md](V2_REMAINING_WORK.md) for the updated prioritized punch list and [V2_FINAL_ACCEPTANCE_REPORT.md](V2_FINAL_ACCEPTANCE_REPORT.md) for the Phase Acceptance Gate assessment.

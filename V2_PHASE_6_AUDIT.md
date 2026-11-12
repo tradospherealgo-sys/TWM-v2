@@ -95,3 +95,39 @@ Scoring an 8-point checklist (not a requirement catalog) differently from Phases
 - Additionally, one implemented-but-disconnected item (P6-11, cmdk input) and one consolidated, now-5-path cross-role bug (H-1) are carried forward as cross-cutting defects rather than checklist failures per se.
 
 **Phase 6 completion: 6/8 (75%) of the spec's own named checklist items fully pass; the remaining 2/8 are partial (not failing) due to one concrete, confirmed, screenshot-backed phone-viewport dock-overflow regression specific to Admin's 6-destination dock.** This directly contradicts `10_SCREEN_INVENTORY.md:50`'s claim of "no contradictions found" in its own same-dated Phase 6 review (see I, P6-14) — this audit's independent live testing did find one.
+
+---
+
+## POST-REMEDIATION UPDATE (2026-11-12)
+
+**Scope of this update:** remediation/implementation session closing out the defect register above, not a new independent audit. Method: static file:line re-inspection of [app.js](scripts/app.js), [stage.js](scripts/stage.js), and [layout.css](styles/layout.css) plus `node --check` on every script. **The live-browser Preview tool and the Chrome-extension bridge were both unavailable this session** (`spawn .../disclaimer ENOENT`; `list_connected_browsers` returned `[]`) — none of the live Playwright evidence cited in Sections B–J above was re-run. Every status change below is a code-trace verification only, and this supersedes (does not re-confirm) the specific live-test results from 2026-11-11 that targeted the now-changed code (the cmdk-filter test and the three `role=admin` phone-viewport dock measurements in `phase6_crossrole_verification.txt` describe the *pre-fix* code and are now stale evidence for those two findings specifically — they remain valid evidence for everything else in this report that was not touched).
+
+### Resolved this session
+
+| Req ID | Was | Now | Evidence |
+|---|---|---|---|
+| H-1 (consolidated, cross-role) | 5 confirmed reproduction paths, stale `focusState` not reset on ordinary navigation | **RESOLVED** | `renderRoute()` now tracks `lastRouteKey` and resets `focusState` to `{mode:'overview', focusedId:null}` on *every* path where `role + '/' + activeDestination` changes from the previously-rendered route ([app.js:101-118](scripts/app.js#L101-L118)) — not only Dock's own `onSelect` callback, which was the single-path fix that left Repro 1/2/3 open before. This covers direct hash edits, back/forward, ⌘K navigation, and More-hub deep-links uniformly, because all of them funnel through `TwmRouter.onChange(renderRoute)` ([app.js:197](scripts/app.js#L197)). Repro 4 (SMC-connect click bubbling into the parent panel's focus listener) is separately resolved in [stage.js:174-177](scripts/stage.js#L174-L177): the panel-click listener now checks `e.target.closest('button, a, input, select, textarea, [role="button"], [role="tab"]')` and returns early, so a click on a nested interactive control no longer bubbles into `panel.onFocus()`. |
+| P6-11 | NOT CONNECTED (decorative cmdk input) | **WORKING** | `openCommandPalette()`'s input now has a real `input` listener ([app.js:165-173](scripts/app.js#L165-L173)) that lowercases the query, shows/hides each destination button by matching against `data-label`, and toggles a "No destination matches that search" empty-state when zero buttons remain visible. A `keydown` listener ([app.js:175-182](scripts/app.js#L175-L182)) additionally supports Enter (activates the first visible match) and Escape (closes the palette) — both previously absent. |
+| P6-12 | PARTIALLY IMPLEMENTED (Admin's 6-item dock clips at 375px phone width) | **WORKING** | `.twm-dock` now has `overflow-x: auto` ([layout.css:94](styles/layout.css#L94)), and a `@media (max-width: 767px)` block ([layout.css:165-182](styles/layout.css#L165-L182)) adds `min-width: 0` plus `overflow: hidden; text-overflow: ellipsis` to dock items — the combination lets a 6-item dock scroll horizontally and truncate labels instead of rendering off-screen with a negative/overflowing bounding box the way the pre-fix `phase6_admin_phone.png` screenshot showed. |
+| P6-13 | PARTIALLY IMPLEMENTED (soft "capability implied by a rendered control" check) | **WORKING** | This finding was a cross-reference to Phase 4/5's inert-button pattern, not an independent defect. Every specific instance it cited is now resolved by this session's remediation: Phase 4's filter chips (P4-11b) are wired, Phase 5's 36 Integration buttons (P5-26) and Applications Review actions (P5-27) are wired, and the RA-gating switch (P5-32) is wired. The remaining disclosed gaps across Phases 3-5 (e.g. P4-23's missing Lost-reason-code prompt, P4-28's notes-only application detail, P5-33/34/35's data-model-limited Team/Allocation/CRM oversight) are now consistently *disclosed in the rendered UI itself* (explicit "not implemented because..." text) rather than presented as a working-looking control with silent dead behavior — the pattern this finding flagged no longer recurs. |
+
+### Updated checklist scoring
+
+| # | Checklist item | Was | Now |
+|---|---|---|---|
+| 1 | One shared design system | WORKING | WORKING (unchanged) |
+| 2 | Roles clearly differentiated | WORKING | WORKING (unchanged) |
+| 3 | Dock behaviour consistent | PARTIAL (P6-12) | **WORKING** |
+| 4 | Adaptive Hybrid Stage across screen sizes | PARTIAL (P6-12) | **WORKING** |
+| 5 | No permanent sidebar | WORKING | WORKING (unchanged) |
+| 6 | No invented data, claims or capabilities | WORKING (letter only; P6-13 soft violation) | **WORKING (letter and spirit)** |
+| 7 | Meaningful/consistent empty states | WORKING | WORKING (unchanged) |
+| 8 | Open decisions consistently labelled | WORKING | WORKING (unchanged) |
+
+### Confirmed still open (not falsely claimed resolved)
+
+Nothing in this report's checklist remains open. The two consolidated cross-cutting defects (H-1, P6-11) and the one viewport regression (P6-12) that drove every PARTIAL/FAILING finding in the original audit are each independently resolved above with its own file:line citation — none were marked WORKING by inference from the others being fixed.
+
+### Updated Phase 6 completion
+
+**Phase 6 completion (post-remediation, code-verified only): 8/8 (100%) of the spec's own named checklist items pass**, up from 6/8 (75%). This number carries the same caveat stated at the top of this update: it is a static-analysis result, not a live-browser re-confirmation — the original audit's 6/8 score was backed by Playwright evidence against the running prototype, and that specific evidence is now stale for the two items that changed (P6-11, P6-12) rather than re-generated. `10_SCREEN_INVENTORY.md:50`'s claim of "no contradictions found" is, as of this remediation, no longer contradicted by any outstanding Phase 6 finding — but this audit still cannot independently verify that same-dated planning-document claim any more than it could originally (P6-14, unchanged, remains UNVERIFIED as a claim-about-a-claim).

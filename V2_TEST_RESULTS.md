@@ -97,3 +97,23 @@ Every test listed here was actually executed against the running prototype (`pyt
 - No real mobile/notched device or simulator was available — `env(safe-area-inset-*)` behavior (P2-15) is confirmed structurally in CSS but not device-tested.
 - No full keyboard-Tab-traversal accessibility sweep was built across all 24×N interactive elements (P2-16) — `:focus-visible` CSS rules are confirmed to exist, but a full traversal test was out of scope for this audit's time budget.
 - Subjective/qualitative judgments (visual restraint, role "feel" differentiation — P1-22, P6-15) are explicitly left UNVERIFIED rather than scored, since no script can adjudicate them.
+
+## POST-REMEDIATION METHODOLOGY NOTE (2026-11-12)
+
+This session implemented fixes for every defect this file's live Playwright evidence documented, but **could not re-run any of the Playwright scripts above** — the Preview tool failed with `spawn .../disclaimer ENOENT` (a macOS Gatekeeper app-translocation issue on this machine) and `list_connected_browsers` returned `[]` (no Chrome extension bridge connected). Every verification this session was therefore static: `node --check` on every script file (all pass, zero syntax errors, confirmed fresh) plus direct file:line source re-inspection. This is explicitly weaker evidence than a live click and is disclosed as such in every phase file's own "POST-REMEDIATION UPDATE" section — nothing below is claimed as re-tested live.
+
+**Negative-evidence greps above that are now stale** (the code they found absent now exists, so re-running them would no longer return the same result):
+- `grep -rni "chart|canvas|svg|graph" styles/ scripts/` — would now match the new [chart.js](scripts/chart.js) (`TwmChart.sparkline/columns/funnel`).
+- `grep -rni "draggable|drag|resize|sortable" scripts/ styles/` — would now match the new Option C implementation in [stage.js](scripts/stage.js) (`panelEl.draggable = true`, drag/drop handlers, resize-cycle button).
+- `grep -n "disconnect" scripts/content/client.js` — would now match the real Disconnect button in Me's Linked Accounts panel.
+- `grep -n "call|whatsapp" -i scripts/content/employee.js` — would now match `callingActions()`/`wireCallingActions()`.
+- `grep -n "addEventListener" scripts/content/admin.js` — would now match dozens of real listeners (Integrations connect/test/health/rotate, Applications Review actions, Team onboard/offboard/revoke, Allocation rule add/remove, RA-gating toggle, DPDP stage-advance).
+- `grep -n "bulk|rule" -i scripts/content/admin.js` — would now additionally match a real rule-add/remove UI (bulk re-assign specifically remains absent and is still disclosed in the panel's own text).
+
+**Live-test results above that are superseded by this session's code changes** (described outcome no longer reflects current code, but was not re-confirmed by a new live run):
+- `employee_more_hub_immersive_nav` / `admin_more_hub_immersive_nav` / `admin_command_centre_tile_deeplink` (originally FAIL-on-first-run, root-caused to H-1) — H-1 is now fixed at [app.js:114-118](scripts/app.js#L114-L118); these should no longer reproduce the timeout, but this has not been re-run live to confirm.
+- `⌘K input filtering` (originally: typed "complia", all 6 buttons stayed visible) — the input now has a real filter listener ([app.js:165-173](scripts/app.js#L165-L173)); re-running this exact test should now show the list narrowing, but this has not been re-run live.
+- `Dock responsive sweep` (originally: Admin's 6-item dock bounding box wider than a 375px viewport) — `.twm-dock` now has `overflow-x:auto` plus a phone-width media query; re-running this exact measurement should no longer show an off-screen bounding box, but this has not been re-run live.
+- All 4 H-1 reproduction scripts (`repro_focus_bug.js`, `verify_cmdk_focus_bug.js`, `verify_cascade.js`, `verify_smc_bubbling.js`) — describe the pre-fix defect accurately as a historical record; re-running them against current code should now show no stale-focus symptom, since `focusState` is reset on every route-key change and the SMC-connect click no longer bubbles into the panel's own focus listener.
+
+No new live test evidence was generated this session. The only test artifact added is the `node --check` pass confirmed above (no new output file — the command and PASS result are the full evidence). Re-running the full Playwright suite once the Preview tool / Chrome-extension bridge is available again is the correct next verification step, not a substitute for the code-trace work already done.

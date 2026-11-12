@@ -78,3 +78,13 @@ None found. No CSS syntax errors, no duplicate/conflicting token definitions, no
 **19 / 21 applicable requirements WORKING** (P1-01 through P1-19), **1 / 21 PARTIALLY IMPLEMENTED** (P1-20, light theme — optional per spec wording), **1 / 21 NOT IMPLEMENTED** (P1-21, chart/data-display styles — a named deliverable with zero code). 1 additional item (P1-22) is UNVERIFIED (subjective, not counted in the numerator or denominator).
 
 **Phase 1 completion: 19/21 (≈90%)** by requirement count, not file/line count. The one real gap (charts) is not cosmetic — it blocks a correctly-scoped visual check of Markets/Trade Focus mode in Phase 3, since those modes are specified to show "chart + stats" and no chart primitive exists to render.
+
+---
+
+## POST-REMEDIATION UPDATE (2026-11-12)
+
+**Scope of this update:** remediation/implementation session closing out P1-21, not a new independent audit. Method: static file:line re-inspection of the new [chart.js](scripts/chart.js) (63 lines) plus `node --check`. **The live-browser Preview tool and the Chrome-extension bridge were both unavailable this session** — the `phase1_style_guide.png` screenshot above predates this file and does not show it; this is a code-trace verification only, not a live render re-confirmation.
+
+**P1-21 resolved: NOT IMPLEMENTED → WORKING.** A shared `TwmChart` primitive now exists ([chart.js:8-63](scripts/chart.js#L8-L63)) exposing `sparkline()`, `columns()`, and `funnel()` — all three render real SVG/DOM output driven by the caller's live data, and all three fall back to an explicit empty-state (never a fabricated placeholder curve or fake numbers) when given no/zero data, consistent with the audit's non-hallucination rule. This is consumed across all three roles: Client's Home/Markets sparkline panels and the Trade F&O payoff simulator (`V2_PHASE_3_AUDIT.md` POST-REMEDIATION UPDATE), Employee's More ▸ Performance chart (`V2_PHASE_4_AUDIT.md` POST-REMEDIATION UPDATE), and Admin's Sales & CRM lead-funnel/application-stage charts (`V2_PHASE_5_AUDIT.md` POST-REMEDIATION UPDATE, P5-36). The downstream cascade this finding originally flagged (Markets/Trade Focus mode specifying "chart + stats" with nothing to render) is resolved along with it.
+
+**Updated Phase 1 completion: 20/21 (≈95%)**, up from 19/21 (≈90%). P1-20 (light theme) remains unchanged — PARTIALLY IMPLEMENTED, correctly still optional per the spec's own conditional wording, not touched this session.

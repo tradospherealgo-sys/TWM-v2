@@ -82,4 +82,16 @@ Classification: **PARTIALLY IMPLEMENTED** (Focus mode works correctly within a s
 
 **14 / 16 applicable requirements WORKING** (P2-01 through P2-14). **1 / 16 PARTIALLY IMPLEMENTED with a confirmed, cross-cutting defect** (P2-08/H-1 — Focus mode correct in isolation, broken across navigation). 2 additional items (P2-15, P2-16) UNVERIFIED (device/accessibility-sweep requirements, not counted in numerator or denominator).
 
+---
+
+## POST-REMEDIATION UPDATE (2026-11-12)
+
+**Scope of this update:** remediation/implementation session closing out H-1 (the one defect driving this phase's single PARTIAL item), not a new independent audit. Method: static file:line re-inspection of [app.js](scripts/app.js) and [stage.js](scripts/stage.js) plus `node --check`. **The live-browser Preview tool and the Chrome-extension bridge were both unavailable this session** — this is a code-trace verification, not a live re-run of the 4 saved repro scripts above; those scripts describe the pre-fix code and are now stale evidence for H-1 specifically (they remain historically accurate as a record of what was found and why).
+
+**H-1 is resolved.** `renderRoute()` now computes `routeKey = route.role + '/' + activeDestination` and resets `focusState` to `{mode:'overview', focusedId:null}` whenever `routeKey !== lastRouteKey` ([app.js:114-118](scripts/app.js#L114-L118)) — every path that changes destination (direct hash edit, back/forward, ⌘K, More-hub deep-links, role-switch) funnels through `TwmRouter.onChange(renderRoute)` and is therefore covered uniformly, not just the Dock's own `onSelect` callback. Repro #4 (event bubbling from a nested button like `#twm-connect-smc` into the parent panel's own `onFocus`) is separately resolved in `stage.js`'s panel click listener, which now checks `e.target.closest('button, a, input, select, textarea, [role="button"], [role="tab"]')` and returns early before calling `panel.onFocus()` ([stage.js:174-177](scripts/stage.js#L174-L177)) — so a click on a nested interactive control no longer sets focus state as a side effect.
+
+With H-1 fixed, P2-08's artificial split (WORKING-in-isolation counted once, the same mechanism's cross-screen breakage counted a second time as the phase's 1 PARTIAL item) no longer applies: Focus mode now works correctly both in isolation and across every navigation path, so P2-08 collapses into a single, clean WORKING classification rather than being counted twice.
+
+**Updated Phase 2 completion: 15/15 (100%)** of the true applicable-requirement count (P2-01 through P2-15, counting P2-08 once; the original phase's "16 applicable" denominator was itself an artifact of counting P2-08's two halves separately — now moot since both halves are WORKING). P2-15 and P2-16 remain UNVERIFIED (device/accessibility-sweep requirements, unchanged, still excluded from the denominator).
+
 **Phase 2 completion: 14/16 (≈88%)**, with the explicit caveat that the one gap (the stale-focusState defect) is high-severity because of its blast radius: it affects navigation reliability on every one of the 24 destinations in the app, not just one screen, and — per repro #4 above — is reachable through a single ordinary Client action (connect SMC account, then switch tabs), not only through contrived or deep-link navigation paths.
