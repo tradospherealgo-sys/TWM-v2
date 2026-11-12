@@ -1,0 +1,5 @@
+1. After clicking watchlist panel (only in-app interaction on Markets), hash: #/client/markets
+2. Stage class after click (expect twm-stage--focus, NOT immersive): twm-stage__grid twm-stage twm-stage--focus
+3. Stage class after manually forcing #/client/markets/watchlist: twm-stage__grid twm-stage twm-stage--immersive
+4. Dock class (expect minimized if immersive mechanism works): twm-dock twm-glass twm-dock--minimized
+5. Watchlist panel has --immersive class: true

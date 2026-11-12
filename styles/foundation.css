@@ -1,0 +1,215 @@
+/*
+  TWM V2 — Foundation components (Phase 1)
+  Buttons, inputs, chips, tabs, badges, panels, glass surfaces.
+  Glassmorphism used with restraint per 01_DECISION_REGISTER.md section A
+  ("Surface language | Glassmorphism, used with restraint").
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--twm-bg-base);
+  color: var(--twm-text-primary);
+  font-family: var(--twm-font-sans);
+  font-feature-settings: var(--twm-font-feature-numeric);
+  font-size: var(--twm-fs-body);
+  line-height: var(--twm-lh-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, p { margin: 0; }
+
+button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* Tabular numbers for every financial/metric figure — locked requirement */
+.twm-num {
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Glass surface — the one surface language for cards/panels/sheets/overlays */
+.twm-glass {
+  background: var(--twm-surface-glass);
+  border: 1px solid var(--twm-border-glass);
+  border-radius: var(--twm-radius-lg);
+  backdrop-filter: var(--twm-blur-glass);
+  -webkit-backdrop-filter: var(--twm-blur-glass);
+  box-shadow: var(--twm-shadow-md);
+}
+
+.twm-glass-strong {
+  background: var(--twm-surface-glass-strong);
+  border: 1px solid var(--twm-border-glass-strong);
+}
+
+/* Panel — the standard content container */
+.twm-panel {
+  padding: var(--twm-space-6);
+}
+
+.twm-panel__title {
+  font-size: var(--twm-fs-title-sm);
+  font-weight: var(--twm-fw-semibold);
+  margin-bottom: var(--twm-space-4);
+}
+
+/* Buttons — every state in the component-state checklist (07_FRONTEND_TECHNICAL_SPEC.md) */
+.twm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--twm-space-2);
+  min-height: var(--twm-touch-target-min);
+  padding: 0 var(--twm-space-5);
+  border-radius: var(--twm-radius-md);
+  border: 1px solid transparent;
+  font-size: var(--twm-fs-body-sm);
+  font-weight: var(--twm-fw-medium);
+  cursor: pointer;
+  transition: background var(--twm-motion-base) var(--twm-ease-standard),
+              transform var(--twm-motion-fast) var(--twm-ease-standard),
+              box-shadow var(--twm-motion-base) var(--twm-ease-standard);
+}
+.twm-btn:focus-visible {
+  outline: 2px solid var(--twm-accent-cyan);
+  outline-offset: 2px;
+}
+.twm-btn--primary {
+  background: var(--twm-accent-primary);
+  color: #fff;
+}
+.twm-btn--primary:hover { background: #2f7fe8; }
+.twm-btn--primary:active { transform: scale(0.98); }
+.twm-btn--secondary {
+  background: transparent;
+  border-color: var(--twm-border-glass-strong);
+  color: var(--twm-text-primary);
+}
+.twm-btn--secondary:hover { background: rgba(255,255,255,0.06); }
+.twm-btn--loading { opacity: 0.7; cursor: progress; }
+.twm-btn:disabled,
+.twm-btn--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Inputs */
+.twm-input {
+  min-height: var(--twm-touch-target-min);
+  width: 100%;
+  padding: 0 var(--twm-space-4);
+  border-radius: var(--twm-radius-sm);
+  border: 1px solid var(--twm-border-glass-strong);
+  background: rgba(255,255,255,0.04);
+  color: var(--twm-text-primary);
+  font-size: var(--twm-fs-body);
+}
+.twm-input::placeholder { color: var(--twm-text-muted); }
+.twm-input:focus {
+  outline: none;
+  border-color: var(--twm-accent-cyan);
+  box-shadow: 0 0 0 3px rgba(54, 207, 255, 0.18);
+}
+.twm-input:disabled { opacity: 0.4; cursor: not-allowed; }
+.twm-input--error { border-color: var(--twm-danger); }
+
+/* Chips */
+.twm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--twm-space-1);
+  padding: var(--twm-space-1) var(--twm-space-3);
+  border-radius: var(--twm-radius-pill);
+  font-size: var(--twm-fs-caption);
+  font-weight: var(--twm-fw-medium);
+  background: rgba(255,255,255,0.08);
+  color: var(--twm-text-secondary);
+}
+.twm-chip--hot { background: rgba(229,72,77,0.18); color: #ff8a8d; }
+.twm-chip--warm { background: rgba(212,165,116,0.2); color: var(--twm-gold); }
+.twm-chip--cold { background: rgba(54,207,255,0.16); color: var(--twm-accent-cyan); }
+.twm-chip--success { background: rgba(54,168,138,0.18); color: var(--twm-emerald); }
+.twm-chip--practice { background: rgba(212,165,116,0.22); color: var(--twm-gold); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* Tabs / segmented control — fixed-chrome pattern (Trade Practice|Live, CRM Leads|Customers) */
+.twm-segmented {
+  display: inline-flex;
+  padding: var(--twm-space-1);
+  border-radius: var(--twm-radius-pill);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--twm-border-glass);
+}
+.twm-segmented__item {
+  min-height: calc(var(--twm-touch-target-min) - 8px);
+  padding: 0 var(--twm-space-5);
+  border-radius: var(--twm-radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--twm-text-secondary);
+  font-weight: var(--twm-fw-medium);
+  cursor: pointer;
+}
+.twm-segmented__item[aria-selected="true"] {
+  background: var(--twm-accent-primary);
+  color: #fff;
+}
+
+/* Badges / status indicators */
+.twm-badge {
+  display: inline-block;
+  padding: 2px var(--twm-space-2);
+  border-radius: var(--twm-radius-sm);
+  font-size: var(--twm-fs-caption);
+  font-weight: var(--twm-fw-semibold);
+}
+.twm-badge--open { background: rgba(212,165,116,0.2); color: var(--twm-gold); }
+.twm-badge--pending-decision {
+  background: rgba(212,165,116,0.14);
+  color: var(--twm-gold);
+  border: 1px dashed var(--twm-gold);
+}
+
+/* Feedback states */
+.twm-state-empty, .twm-state-error, .twm-state-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--twm-space-3);
+  padding: var(--twm-space-10);
+  text-align: center;
+  color: var(--twm-text-secondary);
+}
+.twm-state-error { color: var(--twm-danger); }
+
+.twm-skeleton {
+  border-radius: var(--twm-radius-sm);
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  background-size: 200% 100%;
+  animation: twm-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes twm-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Disclosure strip — PRACTICE ribbon / data-delay disclosure, must be visible on the panel itself */
+.twm-disclosure-strip {
+  display: flex;
+  align-items: center;
+  gap: var(--twm-space-2);
+  padding: var(--twm-space-2) var(--twm-space-4);
+  font-size: var(--twm-fs-caption);
+  color: var(--twm-text-secondary);
+  background: rgba(255,255,255,0.04);
+  border-top: 1px solid var(--twm-border-glass);
+  border-radius: 0 0 var(--twm-radius-lg) var(--twm-radius-lg);
+}

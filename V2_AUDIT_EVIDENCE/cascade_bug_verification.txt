@@ -1,0 +1,5 @@
+CONTROL (clean state) employee/more tile[0] click succeeded: true hash now: #/employee/more/internal-chat
+After clicking My Day panel, stage class: twm-stage__grid twm-stage twm-stage--focus
+On employee/more AFTER poison, stage class: twm-stage__grid twm-stage twm-stage--focus first tile computed style: {"opacity":"0.2","pointerEvents":"none"}
+AFTER POISON employee/more tile[0] click succeeded: false TimeoutError: elementHandle.click: Timeout 4000ms exceeded.
+AFTER Dock-click reset, employee/more tile[0] click succeeded again: true

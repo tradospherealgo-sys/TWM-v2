@@ -1,0 +1,4 @@
+1. Performance tile found: true
+2. Hash after click: #/employee/more/performance
+3. Stage class: twm-stage__grid twm-stage twm-stage--immersive
+4. Panel count on Performance sub-screen (expect 1, flat, no own Overview/Focus substructure): 1

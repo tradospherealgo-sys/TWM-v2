@@ -1,0 +1,4 @@
+1. tile-users found: true
+2. hash after clicking tile-users (no panel arg): #/admin/team
+3. stage class on destination screen: twm-stage__grid twm-stage 
+4. hashchange log (did it ever pass through a Focus-mode intermediate state?): [ '#/admin/team' ]

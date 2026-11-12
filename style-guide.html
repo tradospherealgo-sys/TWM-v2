@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TWM V2 — Design System Reference (Phase 1)</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/foundation.css">
+<style>
+  body { padding: 32px; max-width: 1100px; margin: 0 auto; }
+  section { margin-bottom: 48px; }
+  h2 { font-size: 20px; margin-bottom: 16px; border-bottom: 1px solid var(--twm-border-glass); padding-bottom: 8px; }
+  .swatches { display: flex; gap: 16px; flex-wrap: wrap; }
+  .swatch { width: 140px; }
+  .swatch__color { height: 72px; border-radius: var(--twm-radius-md); border: 1px solid var(--twm-border-glass); }
+  .swatch__label { font-size: 12px; margin-top: 6px; color: var(--twm-text-secondary); }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .type-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; }
+  .type-row span.label { width: 140px; font-size: 12px; color: var(--twm-text-muted); }
+</style>
+</head>
+<body>
+  <h1>TWM V2 Design System — Phase 1</h1>
+  <p style="color:var(--twm-text-secondary)">Tokens sourced from the locked palette (TWM_V2_CRISP_46_MD_EXECUTION_PACKAGE / 13_DESIGN_SYSTEM_AND_STITCH_REFERENCE.md) and the CRISP decision register. No invented colors.</p>
+
+  <section>
+    <h2>Palette</h2>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch__color" style="background:var(--twm-midnight)"></div><div class="swatch__label">Midnight #0B111E</div></div>
+      <div class="swatch"><div class="swatch__color" style="background:var(--twm-deep-navy)"></div><div class="swatch__label">Deep Navy #142B49</div></div>
+      <div class="swatch"><div class="swatch__color" style="background:var(--twm-primary-blue)"></div><div class="swatch__label">Primary Blue #246BCE</div></div>
+      <div class="swatch"><div class="swatch__color" style="background:var(--twm-accent-cyan)"></div><div class="swatch__label">Accent Cyan #36CFFF</div></div>
+      <div class="swatch"><div class="swatch__color" style="background:var(--twm-emerald)"></div><div class="swatch__label">Emerald #36A88A</div></div>
+      <div class="swatch"><div class="swatch__color" style="background:var(--twm-gold)"></div><div class="swatch__label">Gold #D4A574</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Typography (Inter, tabular numbers for figures)</h2>
+    <div class="type-row"><span class="label">Title / Large</span><span style="font-size:var(--twm-fs-title-lg); font-weight:var(--twm-fw-bold)">₹12,45,230.50</span></div>
+    <div class="type-row"><span class="label">Title</span><span style="font-size:var(--twm-fs-title); font-weight:var(--twm-fw-semibold)">Markets Overview</span></div>
+    <div class="type-row"><span class="label">Body</span><span style="font-size:var(--twm-fs-body)">Default body copy at 16px / Inter.</span></div>
+    <div class="type-row"><span class="label">Body small</span><span style="font-size:var(--twm-fs-body-sm); color:var(--twm-text-secondary)">Secondary/supporting copy at 14px.</span></div>
+    <div class="type-row"><span class="label">Caption</span><span style="font-size:var(--twm-fs-caption); color:var(--twm-text-muted)">Caption / meta text at 12px.</span></div>
+  </section>
+
+  <section>
+    <h2>Glass surfaces</h2>
+    <div class="row">
+      <div class="twm-glass twm-panel" style="width:220px"><div class="twm-panel__title">Standard glass</div><p style="color:var(--twm-text-secondary);font-size:14px">Restrained glassmorphism per locked visual direction.</p></div>
+      <div class="twm-glass twm-glass-strong twm-panel" style="width:220px"><div class="twm-panel__title">Strong glass</div><p style="color:var(--twm-text-secondary);font-size:14px">Used for primary/active surfaces.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Buttons — all component states</h2>
+    <div class="row">
+      <button class="twm-btn twm-btn--primary">Default</button>
+      <button class="twm-btn twm-btn--primary twm-btn--loading">Loading…</button>
+      <button class="twm-btn twm-btn--primary" disabled>Disabled</button>
+      <button class="twm-btn twm-btn--secondary">Secondary</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Inputs</h2>
+    <div class="row">
+      <input class="twm-input" style="width:220px" placeholder="Default state">
+      <input class="twm-input twm-input--error" style="width:220px" value="Error state">
+      <input class="twm-input" style="width:220px" value="Disabled" disabled>
+    </div>
+  </section>
+
+  <section>
+    <h2>Chips &amp; badges</h2>
+    <div class="row">
+      <span class="twm-chip twm-chip--hot">HOT</span>
+      <span class="twm-chip twm-chip--warm">WARM</span>
+      <span class="twm-chip twm-chip--cold">COLD</span>
+      <span class="twm-chip twm-chip--success">Converted</span>
+      <span class="twm-chip twm-chip--practice">Practice</span>
+      <span class="twm-badge twm-badge--pending-decision">Open decision — not yet defined</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Segmented control (fixed-chrome pattern: Trade Practice/Live, CRM Leads/Customers)</h2>
+    <div class="twm-segmented" role="tablist">
+      <button class="twm-segmented__item" role="tab" aria-selected="true">Practice</button>
+      <button class="twm-segmented__item" role="tab" aria-selected="false">Live</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Feedback states</h2>
+    <div class="row">
+      <div class="twm-glass" style="width:220px;height:100px"><div class="twm-skeleton" style="width:100%;height:100%;border-radius:var(--twm-radius-lg)"></div></div>
+      <div class="twm-glass twm-state-empty" style="width:220px;height:100px">No data yet</div>
+      <div class="twm-glass twm-state-error" style="width:220px;height:100px">Something went wrong</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Disclosure strip (Practice-mode honesty requirement)</h2>
+    <div class="twm-glass" style="width:320px">
+      <div class="twm-panel"><div class="twm-panel__title">Positions</div></div>
+      <div class="twm-disclosure-strip">PRACTICE / SIMULATED &middot; 15-min delayed data</div>
+    </div>
+  </section>
+</body>
+</html>

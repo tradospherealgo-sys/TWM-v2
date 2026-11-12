@@ -1,0 +1,106 @@
+/*
+  TWM V2 — Design Tokens (Phase 1)
+  Palette source: TWM_V2_CRISP_46_MD_EXECUTION_PACKAGE / 13_DESIGN_SYSTEM_AND_STITCH_REFERENCE.md
+  Locked: Midnight #0B111E, Deep Navy #142B49, Primary Blue #246BCE,
+          Accent #36CFFF, Emerald #36A88A, Gold #D4A574, Inter typeface, tabular numbers.
+  Breakpoints source: 01_DECISION_REGISTER.md section H (confirmed 2026-11-11).
+*/
+
+:root {
+  /* Locked palette */
+  --twm-midnight: #0B111E;
+  --twm-deep-navy: #142B49;
+  --twm-primary-blue: #246BCE;
+  --twm-accent-cyan: #36CFFF;
+  --twm-emerald: #36A88A;
+  --twm-gold: #D4A574;
+
+  /* Semantic surface colors derived from locked palette (implementation detail, not a new palette) */
+  --twm-bg-base: var(--twm-midnight);
+  --twm-bg-elevated: var(--twm-deep-navy);
+  --twm-surface-glass: rgba(20, 43, 73, 0.55);
+  --twm-surface-glass-strong: rgba(20, 43, 73, 0.78);
+  --twm-border-glass: rgba(255, 255, 255, 0.08);
+  --twm-border-glass-strong: rgba(255, 255, 255, 0.14);
+
+  --twm-text-primary: #F4F7FB;
+  --twm-text-secondary: rgba(244, 247, 251, 0.68);
+  --twm-text-muted: rgba(244, 247, 251, 0.44);
+
+  --twm-accent-primary: var(--twm-primary-blue);
+  --twm-accent-secondary: var(--twm-accent-cyan);
+  --twm-success: var(--twm-emerald);
+  --twm-warning: var(--twm-gold);
+  --twm-danger: #E5484D;
+
+  /* Role accent tints — same base palette, a differentiating accent per role so screens don't look identical (see role-differentiation principle, frontendquestions.md:1178) */
+  --twm-role-client-accent: var(--twm-accent-cyan);
+  --twm-role-employee-accent: var(--twm-emerald);
+  --twm-role-admin-accent: var(--twm-gold);
+
+  /* Typography — Inter, locked. Tabular numbers for all financial/metric figures. */
+  --twm-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --twm-font-feature-numeric: 'tnum' 1;
+
+  --twm-fs-caption: 0.75rem;
+  --twm-fs-body-sm: 0.875rem;
+  --twm-fs-body: 1rem;
+  --twm-fs-body-lg: 1.125rem;
+  --twm-fs-title-sm: 1.375rem;
+  --twm-fs-title: 1.75rem;
+  --twm-fs-title-lg: 2.25rem;
+  --twm-lh-tight: 1.2;
+  --twm-lh-normal: 1.5;
+  --twm-fw-regular: 400;
+  --twm-fw-medium: 500;
+  --twm-fw-semibold: 600;
+  --twm-fw-bold: 700;
+
+  /* Spacing scale (4px base unit) */
+  --twm-space-1: 4px;
+  --twm-space-2: 8px;
+  --twm-space-3: 12px;
+  --twm-space-4: 16px;
+  --twm-space-5: 20px;
+  --twm-space-6: 24px;
+  --twm-space-8: 32px;
+  --twm-space-10: 40px;
+  --twm-space-12: 48px;
+  --twm-space-16: 64px;
+
+  /* Radius */
+  --twm-radius-sm: 8px;
+  --twm-radius-md: 14px;
+  --twm-radius-lg: 20px;
+  --twm-radius-pill: 999px;
+
+  /* Elevation (glass, restrained per locked direction) */
+  --twm-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.24);
+  --twm-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --twm-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --twm-blur-glass: blur(18px);
+
+  /* Motion */
+  --twm-motion-fast: 120ms;
+  --twm-motion-base: 220ms;
+  --twm-motion-slow: 360ms;
+  --twm-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Adaptive Hybrid Stage — Focus-mode dim, locked identically across every screen in 04/05/06 */
+  --twm-stage-focus-dim-opacity: 0.2;
+
+  /* Touch targets — sourced, frontendquestions.md:360 */
+  --twm-touch-target-min: 44px;
+
+  /* Breakpoints — confirmed 2026-11-11, 01_DECISION_REGISTER.md section H */
+  --twm-bp-tablet: 768px;
+  --twm-bp-desktop: 1024px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --twm-motion-fast: 0ms;
+    --twm-motion-base: 0ms;
+    --twm-motion-slow: 0ms;
+  }
+}

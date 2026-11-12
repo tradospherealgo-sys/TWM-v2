@@ -1,0 +1,6 @@
+1. Fresh load /admin/team stage class: twm-stage__grid twm-stage 
+2. After clicking Team's Employees panel, stage class: twm-stage__grid twm-stage twm-stage--focus
+3. cmdk palette opened: true
+4. After cmdk-navigating to Compliance, hash: #/admin/compliance stage class: twm-stage__grid twm-stage twm-stage--focus
+5. Compliance screen first panel computed style: {"opacity":"0.2","pointerEvents":"none","panelId":"consent-ledger"}
+6. Click on Compliance panel after cmdk nav succeeded: false TimeoutError: elementHandle.click: Timeout 4000ms exceeded.

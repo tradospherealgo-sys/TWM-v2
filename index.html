@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TWM V2 — Prototype</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/foundation.css">
+<link rel="stylesheet" href="styles/layout.css">
+</head>
+<body>
+  <div id="twm-app">
+    <header id="twm-header" class="twm-header"></header>
+    <nav id="twm-breadcrumbs" class="twm-breadcrumbs"></nav>
+    <main id="twm-stage" class="twm-stage twm-stage__grid"></main>
+  </div>
+
+  <button id="twm-ai-fab" class="twm-ai-fab twm-glass" title="AI Companion / Copilot — floating entry point, not a dock destination">✨</button>
+  <nav id="twm-dock" class="twm-dock"></nav>
+
+  <script src="scripts/router.js"></script>
+  <script src="scripts/stage.js"></script>
+  <script src="scripts/dock.js"></script>
+  <script src="scripts/content/client.js"></script>
+  <script src="scripts/content/employee.js"></script>
+  <script src="scripts/content/admin.js"></script>
+  <script src="scripts/app.js"></script>
+  <script>
+    document.getElementById('twm-ai-fab').addEventListener('click', () => {
+      alert('AI Companion / Copilot entry point.\n\nPrototype placeholder — capability details are an open decision (see 09_OPEN_QUESTIONS_AND_NON_HALLUCINATION_RULES.md). No AI capability is implemented here.');
+    });
+    // AI Companion FAB is only locked for Client (Home) and Employee — not part of Admin's locked structure.
+    function updateFabVisibility() {
+      const role = (location.hash.replace(/^#\/?/, '').split('/')[0]) || 'client';
+      document.getElementById('twm-ai-fab').style.display = role === 'admin' ? 'none' : 'flex';
+    }
+    window.addEventListener('hashchange', updateFabVisibility);
+    updateFabVisibility();
+  </script>
+</body>
+</html>

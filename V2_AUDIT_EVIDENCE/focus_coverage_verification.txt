@@ -1,0 +1,84 @@
+HOME: 9 panels, cursor styles: [
+  'auto', 'auto',
+  'auto', 'auto',
+  'auto', 'auto',
+  'auto', 'auto',
+  'auto'
+]
+HOME: stage class after clicking first panel: twm-stage__grid twm-stage 
+TRADE: 5 panels, cursor styles: [ 'auto', 'auto', 'auto', 'auto', 'auto' ]
+TRADE: stage class after clicking first panel: twm-stage__grid twm-stage 
+SERVICES: 4 panels, cursor styles: [ 'pointer', 'pointer', 'pointer', 'auto' ]
+SERVICES: stage class after clicking first panel: twm-stage__grid twm-stage twm-stage--focus
+ME: 8 panels, cursor styles: [
+  'auto', 'auto',
+  'auto', 'auto',
+  'auto', 'auto',
+  'auto', 'auto'
+]
+node:internal/process/promises:391
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+elementHandle.click: Timeout 30000ms exceeded.
+Call log:
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <main id="twm-stage" class="twm-stage__grid twm-stage twm-stage--focus">…</main> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <main id="twm-stage" class="twm-stage__grid twm-stage twm-stage--focus">…</main> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    56 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <main id="twm-stage" class="twm-stage__grid twm-stage twm-stage--focus">…</main> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+    at checkScreen (/private/tmp/twm_audit_test/verify_focus_coverage.js:19:23)
+    at async /private/tmp/twm_audit_test/verify_focus_coverage.js:29:3 {
+  log: [
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is visible, enabled and stable',
+    '      - scrolling into view if needed',
+    '      - done scrolling',
+    '      - <main id="twm-stage" class="twm-stage__grid twm-stage twm-stage--focus">…</main> intercepts pointer events',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is visible, enabled and stable',
+    '      - scrolling into view if needed',
+    '      - done scrolling',
+    '      - <main id="twm-stage" class="twm-stage__grid twm-stage twm-stage--focus">…</main> intercepts pointer events',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    56 × waiting for element to be visible, enabled and stable',
+    '       - element is visible, enabled and stable',
+    '       - scrolling into view if needed',
+    '       - done scrolling',
+    '       - <main id="twm-stage" class="twm-stage__grid twm-stage twm-stage--focus">…</main> intercepts pointer events',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v20.20.2
+ME (fresh/clean load): cursor styles: [
+  'pointer', 'pointer',
+  'pointer', 'pointer',
+  'pointer', 'pointer',
+  'auto',    'auto'
+]
+ME: stage class after clicking first panel (Profile): twm-stage__grid twm-stage twm-stage--focus

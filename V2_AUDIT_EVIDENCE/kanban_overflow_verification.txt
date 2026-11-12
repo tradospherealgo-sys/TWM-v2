@@ -1,0 +1,4 @@
+phone_portrait leadsSelected= true kanbanOverflowX= auto columnFlexBasis= 260px
+phone_landscape leadsSelected= true kanbanOverflowX= visible columnFlexBasis= 0px
+tablet leadsSelected= true kanbanOverflowX= visible columnFlexBasis= 0px
+desktop leadsSelected= true kanbanOverflowX= visible columnFlexBasis= 0px

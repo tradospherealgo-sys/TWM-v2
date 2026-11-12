@@ -1,0 +1,101 @@
+# Phase 4 Audit — Employee Experience
+
+Audit date: 2026-11-11. Audited files: [scripts/content/employee.js](scripts/content/employee.js) (full, 121 lines), cross-referenced against [scripts/dock.js](scripts/dock.js), [scripts/app.js](scripts/app.js), [scripts/stage.js](scripts/stage.js), [index.html](index.html). Source of truth: `05_EMPLOYEE_INTERFACE.md` (confirmed 2026-11-11), `MASTER_PROMPT.md` §9 and §12 Phase 4, `01_DECISION_REGISTER.md` §A/§H, `09_OPEN_QUESTIONS_AND_NON_HALLUCINATION_RULES.md` (Employee role-permissions and Performance-KPI items are explicitly open/not-finalized).
+
+Method: static file:line citation plus live-browser automated testing via Playwright (Chromium) against the running prototype. The same evidence standard as Phases 2-3 applies: every interactive-behavior claim is backed by either a direct source-code absence check (`grep`) or an actual browser click/DOM read, not inference.
+
+## A. Original planned scope
+
+Per `05_EMPLOYEE_INTERFACE.md`, Employee has a 5-destination dock (My Day, CRM, Applications, Tasks, More) plus two non-dock in-context patterns (AI Copilot as a floating entry point, Calling as a record-level in-context action). My Day is a distinct "Operational Command Queue" (deliberately not a Client-Home reskin). CRM locks a full Leads/Customers hierarchy with HOT/WARM/COLD scoring and a 4-stage pipeline. Applications locks a 6-stage sequence synthesized from Employee+Admin source material. Tasks is the literal to-do list, distinct from My Day. More is a tile hub for Internal Chat, Knowledge & SOP, Performance, Daily Reports, each specified to open its "own Overview/Focus/Immersive." Fully Customizable (Option C) personalisation applies app-wide except two named fixed-chrome exceptions. Employee role-permissions, calling/chat interaction detail, and Performance KPI definitions are explicitly flagged as open/not-finalized in the source package — any absence of these is expected, not a defect.
+
+## B. Successfully working features
+
+| Req ID | Requirement | Source | File:Line | Status |
+|---|---|---|---|---|
+| P4-01 | Dock: My Day → CRM → Applications → Tasks → More, exact order/labels | "Finalized structure" §Dock | [dock.js:17-23](scripts/dock.js#L17-L23) | WORKING |
+| P4-02 | AI Copilot as a floating entry point (not a dock destination), on every Employee screen | same | shared FAB [index.html:29-38](index.html#L29-L38) — hidden only for `role==='admin'`, so visible for employee | WORKING |
+| P4-03 | My Day Overview: Calls to Make / Follow-ups Due / Applications Waiting / AI Briefing / Targets vs Actuals, 5 panels | My Day "Overview" | [employee.js:26-32](scripts/content/employee.js#L26-L32) | WORKING — exact 5-panel match |
+| P4-04 | My Day AI Briefing: illustrative framing only, never fabricated counts | same | [employee.js:30](scripts/content/employee.js#L30) | WORKING |
+| P4-05 | My Day Targets vs Actuals: module presence only, no invented KPI numbers | My Day Overview + More §Performance note | [employee.js:31](scripts/content/employee.js#L31) | WORKING — correctly shows `.twm-badge--pending-decision` rather than a fabricated figure |
+| P4-06 | My Day Focus: selecting a queue item engages Focus mode | My Day "Focus" | [employee.js:33](scripts/content/employee.js#L33) | WORKING mechanism — all 5 panels have `onFocus`; carried over from Phase 2's `focus_mode_dim_behavior` test and [employee_myday_focus_mode.png](V2_AUDIT_EVIDENCE/screenshots/employee_myday_focus_mode.png) |
+| P4-07 | CRM Leads\|Customers segmented control, fixed chrome, Leads default landing | CRM "Sub-navigation" | [employee.js:10,39-48](scripts/content/employee.js#L10) | WORKING |
+| P4-08 | Lead scoring: HOT / WARM / COLD chips | CRM "Leads" | [employee.js:53](scripts/content/employee.js#L53), semantic chip classes confirmed WORKING in Phase 1 | WORKING |
+| P4-09 | Lead stage pipeline: New → Contacted → Qualified → Converted / Lost | same | [employee.js:12,54](scripts/content/employee.js#L12) | WORKING — kanban renders exactly these 4 columns; `overflow-x` responsive behavior independently verified correct in Phase 2's [kanban_overflow_verification.txt](V2_AUDIT_EVIDENCE/kanban_overflow_verification.txt) |
+| P4-10 | Customer 360° view: Products Held / Applications / Documents / Tickets / Call History / Consents | CRM "Customers" | [employee.js:58](scripts/content/employee.js#L58) | WORKING — exact 6-item match, confirmed by [employee_crm_customers_tab.png](V2_AUDIT_EVIDENCE/screenshots/employee_crm_customers_tab.png) |
+| P4-11 | Applications: Filter chips by product type (Demat/MF/Insurance/Loan) | Applications | [employee.js:68](scripts/content/employee.js#L68) | WORKING (presence; functional wiring assessed separately, Section C) |
+| P4-12 | Applications stage sequence: 6-stage exact match | Applications "Stages" | [employee.js:13,69](scripts/content/employee.js#L13) | WORKING |
+| P4-13 | Applications Decision stays empty/pending, never fabricated | same | [employee.js:69](scripts/content/employee.js#L69) | WORKING |
+| P4-14 | Tasks: literal to-do list, explicitly distinct from My Day | Tasks | [employee.js:76-81](scripts/content/employee.js#L76-L81) | WORKING — copy explicitly states the distinction, matching spec intent |
+| P4-15 | More hub: 4 tiles — Internal Chat, Knowledge & SOP, Performance, Daily Reports | More | [employee.js:85-90](scripts/content/employee.js#L85-L90) | WORKING |
+| P4-16 | More hub tile navigation reaches a full-stage (Immersive) sub-view | More | [employee.js:103](scripts/content/employee.js#L103) calls `TwmRouter.navigate('employee','more',h.id)` | WORKING — live-confirmed: clicking the Performance tile changes hash to `#/employee/more/performance` and stage class to `twm-stage--immersive` ([employee_more_verification.txt](V2_AUDIT_EVIDENCE/employee_more_verification.txt)). This is the one Employee case where Immersive mode is genuinely reachable through ordinary UI, unlike every Client screen (see Phase 3 finding H-2) |
+| P4-17 | Performance: destination locked, no invented KPI formulas/weightings/thresholds | More §Performance | [employee.js:88](scripts/content/employee.js#L88) | WORKING — correctly deferred via pending-decision badge, consistent with `09_OPEN_QUESTIONS...md` flagging this as genuinely undecided |
+| P4-18 | Fixed-chrome exceptions: CRM Leads\|Customers tab and Applications stage columns are not user-rearrangeable | Personalisation | Trivially true — nothing anywhere is draggable (see P4-24) | WORKING (by correct, if coincidental, compliance) |
+| P4-19 | Non-hallucination: no fabricated employee names, lead records, call outcomes/recordings, scores, consent records, decisions, commissions, targets, performance values, or permissions | "Non-hallucination for Employee" | Confirmed by full-file read — every panel is either an honest empty-state or a generic label/chip; zero invented data of any kind anywhere in the 121-line file | WORKING — a clean pass on the audit's highest-priority safety check |
+
+## C. Implemented-but-disconnected features
+
+| Req ID | Requirement | Gap | File:Line |
+|---|---|---|---|
+| P4-11b | Applications "Filterable by product type" | The 4 product-type chips (Demat/MF/Insurance/Loan) render with correct labels, but have no click handler — `grep` of `applicationsScreen()` shows no `addEventListener` on these chips, and the kanban below them is static regardless of which chip is "selected." Visually present, functionally inert. | [employee.js:68](scripts/content/employee.js#L68) |
+
+## D. Partially implemented features
+
+| Req ID | Requirement | Gap |
+|---|---|---|
+| P4-06b | My Day Focus: "selecting a queue item expands it with the underlying Lead/Customer/Application detail" | The Focus *mechanism* works (P4-06), but there is no underlying Lead/Customer/Application record to show — Focus mode re-renders the exact same placeholder text the panel already showed in Overview. This is a direct consequence of there being no record/data model anywhere in the file (consistent with the honesty rule — it cannot show fake detail — but then the panel also cannot show *real* detail, since none exists). |
+| P4-20 | CRM "Customers — ...documents (masked until needed, same reveal-on-demand pattern as Client Me's KYC Vault)" | Only the descriptive sentence "Documents masked until explicit reveal — same pattern as..." renders ([employee.js:58](scripts/content/employee.js#L58)); there is no document list and no reveal control to exercise — identical gap to Client Me's P3-51 finding in `V2_PHASE_3_AUDIT.md`. |
+| P4-21 | More hub: "each opens its own Overview/Focus/Immersive" | Live-confirmed ([employee_more_verification.txt](V2_AUDIT_EVIDENCE/employee_more_verification.txt)): clicking a tile does successfully reach a full-stage view (so the hub-to-sub-destination *navigation* works, credited in P4-16), but that sub-view is a single flat panel with no Overview state, no further Focus target, and no way to "zoom out" to an Overview before Immersive — `moreScreen(panelId)` ([employee.js:91-97](scripts/content/employee.js#L91-L97)) returns exactly one panel, always already in Immersive mode, for all 4 hub items. The spec's three-tier structure per sub-destination does not exist; only a single, flat, one-shot detail page does. |
+
+## E. Planned-but-not-implemented features
+
+| Req ID | Requirement | Source | Evidence of absence |
+|---|---|---|---|
+| P4-22 | Calling: "an in-context action launched from inside a Lead/Customer record; the recording and outcome attach automatically to that record" | Dock/Calling note | `grep -n "call\|whatsapp" scripts/content/employee.js` (case-insensitive) returns zero functional matches — no call button, no WhatsApp-template action, no note-taking control exists anywhere. The spec's own Leads section separately lists "Actions: one-tap call, WhatsApp template, note" (line 47 of the spec) — none of the three exist in code. |
+| P4-23 | CRM "Converted creates a Customer record; Lost requires a reason code, never a blank close" | CRM "Leads" | No individual lead records exist in the UI at all — the Leads tab shows only a Scoring legend panel and an empty kanban ([employee.js:53-54](scripts/content/employee.js#L53-L54)), so there is nothing to convert or lose, and no reason-code prompt of any kind exists in the file. |
+| P4-24 | Fully Customizable (Option C) personalisation — panel layout, filters and saved views across My Day/CRM/Applications/Tasks/More | "Personalisation" | `grep -rni "draggable\|resize\|sortable" scripts/ styles/` (repo-wide, re-run this session) returns the same single text-string false positive already found in Phase 3 — zero drag/resize/saved-view code anywhere. Identical app-wide gap to Client's P3-13/22/38/48; not double-counted in Phase 3's numerator, logged here for Employee's own named instance of the same decision and will be consolidated once more in Phase 6. |
+| P4-25 | CRM Focus: "selecting a lead/customer expands their full detail in place" | CRM "Focus" | There is no list of individual lead or customer rows anywhere in `crmScreen()` — only 3 fixed panels total (tab control, Scoring/Pipeline on Leads, 360° View on Customers) have `onFocus`, and all three expand to their own unchanged content, not a specific lead/customer's detail. The spec's "selecting a lead/customer" presumes a list of selectable individual records, which does not exist. |
+| P4-26 | CRM Immersive: "an active call or document review goes full-stage" | CRM "Immersive" | No call or document-review content exists (P4-22, P4-20), and — per the same mechanism gap documented for Client in Phase 3's H-2 — `crmScreen()`'s panels never call `TwmRouter.navigate` with a panel argument, so even the generic Immersive mechanism is never invoked from CRM. |
+| P4-27 | Applications Focus: "selecting an application expands its checklist/document detail" | Applications "Focus" | Same structural gap as P4-25: only 2 fixed panels (`applications-filter`, `applications-stages`) have `onFocus`; there are no individual application records to select, so Focus can only ever expand one of these 2 generic panels, never a specific application's checklist. |
+| P4-28 | Applications Immersive: "document upload/review or the 'send to review' action goes full-stage" | Applications "Immersive" | No upload/review/send-to-review UI exists anywhere in `applicationsScreen()`, and no panel ever navigates with a panel argument — unreachable and content-less, same pattern as P4-26. |
+| P4-29 | Tasks Focus: "selecting a task expands detail/notes" | Tasks "Focus" | Only one generic `task-list` panel exists with `onFocus` ([employee.js:79](scripts/content/employee.js#L79)); there is no list of individual tasks to select, so this is the same structural gap as P4-25/P4-27 — the panel-level Focus mechanism works, but the spec's per-item selection semantics cannot be exercised because no items exist. |
+
+## F. Missing screens/components/workflows
+
+No entire dock destination is missing — all 5 route correctly. The missing pieces are entirely sub-record/workflow level, already itemized in Section E: there is no individual Lead, Customer, Application, or Task entity anywhere in the data model (every screen operates at the panel/category level only, never at the record level the spec repeatedly describes selecting), no Calling workflow, and no document-upload/review workflow. Internal Chat and Knowledge & SOP (More hub items) render only a one-line placeholder each — consistent with `09_OPEN_QUESTIONS_AND_NON_HALLUCINATION_RULES.md` flagging "Calling and internal chat interaction details" as explicitly not finalized, so their minimal state is expected rather than a surprise gap.
+
+## G. Backend/external integration dependencies
+
+| Req ID | Requirement | Dependency |
+|---|---|---|
+| P4-22 | Real call recording/outcome capture | Requires telephony/call-recording integration, explicitly out of this frontend-only phase. |
+| P4-23 | Real lead/customer record creation and persistence | Requires a backend CRM data store — out of scope per `MASTER_PROMPT.md`'s Excluded list (business processing logic, DB schema). |
+| P4-13 | Genuine lender/insurer Decision responses | Requires the same backend/integration dependency already logged for Client Services' Loans (`V2_PHASE_3_AUDIT.md` Section G) — correctly represented as pending/empty rather than fabricated. |
+| P4-17 | Performance KPI values once defined | `09_OPEN_QUESTIONS_AND_NON_HALLUCINATION_RULES.md` lists "Performance metric definitions" as an explicitly open question requiring an owner decision before any real figures can be built — not purely a backend dependency, but also a pending product decision. |
+
+## H. Bugs, inconsistencies, and technical problems
+
+No Employee-specific defect beyond the already-documented, cross-cutting H-1 (stale `focusState`, `V2_PHASE_2_AUDIT.md`) was found this phase. My Day, CRM, Applications, and Tasks all inherit H-1's risk (any non-Dock arrival at these screens after Focus mode was engaged elsewhere will show the same stuck-dim/inert-panel symptom), but no new, Employee-specific root cause was identified — re-confirmed rather than re-logged separately, to avoid double-counting one defect across phases.
+
+## I. Unverified requirements and reasons
+
+| Req ID | Requirement | Why unverified |
+|---|---|---|
+| — | Employee role-permissions (which actions are available to which employee sub-roles) | `09_OPEN_QUESTIONS_AND_NON_HALLUCINATION_RULES.md` explicitly lists this as "not finalized — ask before locking." No requirement ID was assigned in this audit's catalog since the spec itself has not yet defined the requirement to check against. Not counted as NOT IMPLEMENTED (there is nothing yet to implement) nor WORKING — correctly out of scope for a PASS/FAIL verdict until the owner decides it. |
+
+## J. Evidence references
+
+- Static: exact file:line citations throughout, re-read fresh this session from the full 121-line [employee.js](scripts/content/employee.js) and [dock.js:17-23](scripts/dock.js#L17-L23).
+- Live interaction: [employee_more_verification.txt](V2_AUDIT_EVIDENCE/employee_more_verification.txt), script [verify_employee_more.js](V2_AUDIT_EVIDENCE/verify_employee_more.js), screenshot [employee_more_performance_immersive.png](V2_AUDIT_EVIDENCE/screenshots/employee_more_performance_immersive.png) — confirms the More-hub tile → Immersive navigation path actually fires in a real browser, the one case in the whole app (outside Admin, see Phase 5) where Client-style unreachability (Phase 3's H-2) does not apply.
+- Carried-over evidence from Phase 2: [employee_myday_focus_mode.png](V2_AUDIT_EVIDENCE/screenshots/employee_myday_focus_mode.png), [employee_crm_customers_tab.png](V2_AUDIT_EVIDENCE/screenshots/employee_crm_customers_tab.png), [kanban_overflow_verification.txt](V2_AUDIT_EVIDENCE/kanban_overflow_verification.txt), [cascade_bug_verification.txt](V2_AUDIT_EVIDENCE/cascade_bug_verification.txt) (the `employee_more_hub_immersive_nav` test entry).
+- Absence-of-feature commands (run fresh this session): `grep -n "call\|whatsapp" -i scripts/content/employee.js` → zero functional matches; `grep -rni "draggable\|resize\|sortable" scripts/ styles/` → one text-string false positive only (repo-wide, shared with Phase 3's finding).
+
+## K. Actual phase completion
+
+Counting each Req ID in Sections B-E once (29 total applicable requirement lines, excluding the 1 explicitly-open-per-spec item in Section I from the denominator):
+
+- **WORKING: 19** (P4-01 through P4-19)
+- **IMPLEMENTED BUT NOT CONNECTED: 1** (P4-11b)
+- **PARTIALLY IMPLEMENTED: 3** (P4-06b, P4-20, P4-21)
+- **NOT IMPLEMENTED: 8** (P4-22 through P4-29)
+
+**Phase 4 completion: 19/31 (≈61%)** by requirement count (numerator = fully WORKING only, consistent with the Phase 1-3 methodology; denominator = 19+1+3+8 = 31). This is a stronger result than Phase 3's Client audit, driven mainly by two structural advantages: (1) the More hub's Immersive navigation genuinely works end-to-end (P4-16), unlike any Client screen, and (2) every Employee screen's top-level panel structure matches its spec almost exactly. The recurring gap pattern is the same shape seen in Phase 3: the spec repeatedly describes selecting an *individual record* (a specific lead, customer, application, or task) and seeing its detail, but no individual-record list exists anywhere in the data model — every "Focus" and "Immersive" requirement that depends on a selectable record (P4-25 through P4-29) is consequently NOT IMPLEMENTED, not because the Adaptive Hybrid Stage mechanism is broken, but because there is nothing at the record level for it to operate on yet.

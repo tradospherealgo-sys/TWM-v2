@@ -1,0 +1,402 @@
+{
+  "console_errors": [
+    {
+      "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "location": {
+        "url": "http://localhost:8743/favicon.ico",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "page_errors": [],
+  "route_tests": [
+    {
+      "role": "client",
+      "dest": "home",
+      "panel": null,
+      "panelCount": 9,
+      "headerBrand": "Client workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_client_home.png",
+      "bodySample": "Your Financial JourneyInteractive Financial Journey — pick a branch to explore. Demat & Account ServicesInsuranceIPO DiscoveryFinancial LearningPractice TradingAdditional Financial Services "
+    },
+    {
+      "role": "client",
+      "dest": "markets",
+      "panel": null,
+      "panelCount": 5,
+      "headerBrand": "Client workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_client_markets.png",
+      "bodySample": "Index StripNIFTY 50SENSEXNSE · delayedSector PerformanceSector performance panel — public data, no connection required.Personal Watchlist Connect your SMC account to build a personal watchlist. Connect SMC Ac"
+    },
+    {
+      "role": "client",
+      "dest": "trade",
+      "panel": null,
+      "panelCount": 5,
+      "headerBrand": "Client workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_client_trade.png",
+      "bodySample": " Practice Live BalancePractice ₹10,00,000.00PRACTICE / SIMULATED · 15-min / EOD delayed dataPositions / Order BookPositions / Order Book — practice/simulated data.PRACTICE / SIMULATED · 15-min"
+    },
+    {
+      "role": "client",
+      "dest": "services",
+      "panel": null,
+      "panelCount": 4,
+      "headerBrand": "Client workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_client_services.png",
+      "bodySample": "InvestDemat & Trading AccountMutual Funds & SIPIPOProtectInsuranceWealth & ProtectionInsurer/broking arrangement not yet decidedBorrowLoans & Financing PWA journey: full loan-origination flow. Google Play jou"
+    },
+    {
+      "role": "client",
+      "dest": "me",
+      "panel": null,
+      "panelCount": 8,
+      "headerBrand": "Client workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_client_me.png",
+      "bodySample": "ProfileProfile — fixed, non-draggable panel.KYC VaultDocuments masked by default — explicit reveal required.Linked Accounts No linked broker account. Connect SMC Account Consents & Data RightsRead-only co"
+    },
+    {
+      "role": "employee",
+      "dest": "myday",
+      "panel": null,
+      "panelCount": 5,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_myday.png",
+      "bodySample": "Calls to MakeNo calls queued.Follow-ups DueNo follow-ups due.Applications WaitingNo applications waiting on you.AI BriefingIllustrative framing only — summary content depends on real queue state, never a fabricated count"
+    },
+    {
+      "role": "employee",
+      "dest": "crm",
+      "panel": null,
+      "panelCount": 3,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_crm.png",
+      "bodySample": " Leads Customers ScoringHOT WARM COLDStage Pipeline New No leads at this stage. Contacted No leads at this stage. Qualified "
+    },
+    {
+      "role": "employee",
+      "dest": "applications",
+      "panel": null,
+      "panelCount": 2,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_applications.png",
+      "bodySample": "Filter by Product TypeDematMFInsuranceLoanStage Sequence Checklist No applications at this stage. Documents Requested No applications at this stage. Submitted "
+    },
+    {
+      "role": "employee",
+      "dest": "tasks",
+      "panel": null,
+      "panelCount": 1,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_tasks.png",
+      "bodySample": "Assigned TasksNo tasks assigned. Distinct from My Day's AI-curated queue — this is the literal to-do list."
+    },
+    {
+      "role": "employee",
+      "dest": "more",
+      "panel": null,
+      "panelCount": 4,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_more.png",
+      "bodySample": "Internal ChatInteraction details beyond placement — open decision.Knowledge and SOPKnowledge base / SOP library.PerformanceDestination locked. Exact KPI definitions — open decisionDaily ReportsDaily reporting module."
+    },
+    {
+      "role": "employee",
+      "dest": "more",
+      "panel": "internal-chat",
+      "panelCount": 1,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_more_internal-chat.png",
+      "bodySample": "Internal ChatInteraction details beyond placement — open decision."
+    },
+    {
+      "role": "employee",
+      "dest": "more",
+      "panel": "knowledge-sop",
+      "panelCount": 1,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_more_knowledge-sop.png",
+      "bodySample": "Knowledge and SOPKnowledge base / SOP library."
+    },
+    {
+      "role": "employee",
+      "dest": "more",
+      "panel": "performance",
+      "panelCount": 1,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_more_performance.png",
+      "bodySample": "PerformanceDestination locked. Exact KPI definitions — open decision"
+    },
+    {
+      "role": "employee",
+      "dest": "more",
+      "panel": "daily-reports",
+      "panelCount": 1,
+      "headerBrand": "Employee workspace",
+      "breadcrumb": "",
+      "hasNotFound": false,
+      "screenshot": "route_employee_more_daily-reports.png",
+      "bodySample": "Daily ReportsDaily reporting module."
+    },
+    {
+      "role": "admin",
+      "dest": "command-centre",
+      "panel": null,
+      "panelCount": 9,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /Command Centre",
+      "hasNotFound": false,
+      "screenshot": "route_admin_command-centre.png",
+      "bodySample": "Users—No data yet.Clients—No data yet.Leads—No data yet.Applications by Stage—No data yet.Calls Today—No data yet.Signals Pending Review—No data yet.Open Tickets—No data yet.System Health—No data yet.Needs Your Attention"
+    },
+    {
+      "role": "admin",
+      "dest": "team",
+      "panel": null,
+      "panelCount": 2,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /Team",
+      "hasNotFound": false,
+      "screenshot": "route_admin_team.png",
+      "bodySample": "EmployeesNo employee records yet. Onboard/offboard with instant session revoke, targets and performance, and call-recording review live here.Allocation EngineManualRound-RobinProduct SkillPincode No assignment "
+    },
+    {
+      "role": "admin",
+      "dest": "sales-crm",
+      "panel": null,
+      "panelCount": 2,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /Sales & CRM",
+      "hasNotFound": false,
+      "screenshot": "route_admin_sales-crm.png",
+      "bodySample": "Org-wide CRMNo leads or customers across employees yet. Reassignment visibility lives here.Sales MonitoringBusiness performance view across the pipeline — no data yet."
+    },
+    {
+      "role": "admin",
+      "dest": "applications-review",
+      "panel": null,
+      "panelCount": 2,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /Applications Review",
+      "hasNotFound": false,
+      "screenshot": "route_admin_applications-review.png",
+      "bodySample": "Admin ActionsDocument Checker (AI pre-check + human verify)Approve / Send BackForward to Lender/Insurer — tracked hand-off Which admin role/permission-set can take which action open decisionStage Sequence "
+    },
+    {
+      "role": "admin",
+      "dest": "compliance",
+      "panel": null,
+      "panelCount": 4,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /Compliance",
+      "hasNotFound": false,
+      "screenshot": "route_admin_compliance.png",
+      "bodySample": "Consent LedgerNo consent records yet.Data-Access LogNo document-access events yet — who opened which document.DPDP Requests Requested No requests at this stage. Under Review "
+    },
+    {
+      "role": "admin",
+      "dest": "more",
+      "panel": null,
+      "panelCount": 4,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /More",
+      "hasNotFound": false,
+      "screenshot": "route_admin_more.png",
+      "bodySample": "Integrations SMC Not connected · key •••• ConnectTestHealthRotate Market Data Not connected · key •••• ConnectTestHealthRotate Google N"
+    },
+    {
+      "role": "admin",
+      "dest": "more",
+      "panel": "integrations",
+      "panelCount": 1,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /More /Integrations",
+      "hasNotFound": false,
+      "screenshot": "route_admin_more_integrations.png",
+      "bodySample": "Integrations SMC Not connected · key •••• ConnectTestHealthRotate Market Data Not connected · key •••• ConnectTestHealthRotate Google N"
+    },
+    {
+      "role": "admin",
+      "dest": "more",
+      "panel": "signals-desk",
+      "panelCount": 1,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /More /Signals Desk",
+      "hasNotFound": false,
+      "screenshot": "route_admin_more_signals-desk.png",
+      "bodySample": "Signals DeskShadow Mode — default pre-RA registration Capture No signals at this stage. Parse No signals at this stage. Validate No signals at thi"
+    },
+    {
+      "role": "admin",
+      "dest": "more",
+      "panel": "content-sop",
+      "panelCount": 1,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /More /Content and SOP",
+      "hasNotFound": false,
+      "screenshot": "route_admin_more_content-sop.png",
+      "bodySample": "Content and SOPKnowledge articles, product catalogue and disclaimers — re-indexed into the AI knowledge base on save. No content yet."
+    },
+    {
+      "role": "admin",
+      "dest": "more",
+      "panel": "system-health",
+      "panelCount": 1,
+      "headerBrand": "Admin workspace",
+      "breadcrumb": "Admin /More /System Health",
+      "hasNotFound": false,
+      "screenshot": "route_admin_more_system-health.png",
+      "bodySample": "System HealthModule presence only. Exact states/metric definitions — open decision"
+    }
+  ],
+  "interaction_tests": [
+    {
+      "test": "client_dock_click_navigation",
+      "count": 5,
+      "clicks": [
+        {
+          "label": "Home",
+          "resultingHash": "#/client/home"
+        },
+        {
+          "label": "Markets",
+          "resultingHash": "#/client/markets"
+        },
+        {
+          "label": "Trade",
+          "resultingHash": "#/client/trade"
+        },
+        {
+          "label": "Services",
+          "resultingHash": "#/client/services"
+        },
+        {
+          "label": "Me",
+          "resultingHash": "#/client/me"
+        }
+      ]
+    },
+    {
+      "test": "role_switch_select",
+      "toEmployee": "#/employee/myday",
+      "toAdmin": "#/admin/command-centre",
+      "breadcrumbVisibleAdmin": true
+    },
+    {
+      "test": "ai_fab_visibility",
+      "client": true,
+      "employee": true,
+      "admin": false
+    },
+    {
+      "test": "breadcrumb_visibility_role_gated",
+      "client": false,
+      "employee": false,
+      "admin": true
+    },
+    {
+      "test": "admin_cmdk_palette_click",
+      "cmdkOpened": true,
+      "cmdkDestCount": 6,
+      "afterCmdkHash": "#/admin/team"
+    },
+    {
+      "test": "admin_cmdk_keyboard_shortcut",
+      "opened": true
+    },
+    {
+      "test": "client_trade_practice_live_tab_and_connect_gate",
+      "practiceSelectedBefore": "true",
+      "liveSelectedAfter": "true",
+      "connectBannerVisible": true,
+      "liveConnectedVisible": true
+    },
+    {
+      "test": "employee_crm_leads_customers_tab",
+      "leadsSelectedBefore": "true",
+      "customersSelectedAfter": "true",
+      "customersContentHas360": true
+    },
+    {
+      "test": "focus_mode_dim_behavior",
+      "stageClassAfterFocus": "twm-stage__grid twm-stage twm-stage--focus",
+      "dimmedCount": 4,
+      "totalPanels": 5
+    },
+    {
+      "test": "employee_more_hub_immersive_nav",
+      "error": "TimeoutError: elementHandle.click: Timeout 30000ms exceeded."
+    },
+    {
+      "test": "admin_more_hub_immersive_nav",
+      "error": "TimeoutError: elementHandle.click: Timeout 30000ms exceeded."
+    },
+    {
+      "test": "admin_command_centre_tile_deeplink",
+      "error": "TimeoutError: elementHandle.click: Timeout 30000ms exceeded."
+    }
+  ],
+  "responsive_tests": [
+    {
+      "viewport": "phone_portrait",
+      "width": 390,
+      "height": 844,
+      "gridTemplateColumns_commandCentre": "342px",
+      "kanbanOverflowX_employeeCrm": null,
+      "dockTouchTargetOk": true
+    },
+    {
+      "viewport": "phone_landscape",
+      "width": 844,
+      "height": 390,
+      "gridTemplateColumns_commandCentre": "388px 388px",
+      "kanbanOverflowX_employeeCrm": null,
+      "dockTouchTargetOk": true
+    },
+    {
+      "viewport": "tablet",
+      "width": 900,
+      "height": 1200,
+      "gridTemplateColumns_commandCentre": "416px 416px",
+      "kanbanOverflowX_employeeCrm": null,
+      "dockTouchTargetOk": true
+    },
+    {
+      "viewport": "desktop",
+      "width": 1440,
+      "height": 900,
+      "gridTemplateColumns_commandCentre": "440px 440px 440px",
+      "kanbanOverflowX_employeeCrm": null,
+      "dockTouchTargetOk": true
+    }
+  ]
+}

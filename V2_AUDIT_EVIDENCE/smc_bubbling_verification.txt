@@ -1,0 +1,10 @@
+1. Before clicking Connect SMC, stage class: twm-stage__grid twm-stage 
+2. Connect button found: true
+3. After clicking Connect SMC, stage class: twm-stage__grid twm-stage twm-stage--focus
+4. TwmSetFocus call log (should be empty if no bubbling triggered it): [ '["focus","watchlist"]' ]
+5. Still shows "Connect SMC Account" text (expect false after connecting): false
+6. On Trade screen (after hash nav from poisoned Markets state), stage class: twm-stage__grid twm-stage twm-stage--focus
+7. Live tab element found: true
+8. .twm-stage computed pointer-events on Trade screen: auto
+9. [data-mode="live"] computed pointer-events: none
+10. Live tab click FAILED (confirms stuck focus bug): TimeoutError: elementHandle.click: Timeout 3000ms exceeded.

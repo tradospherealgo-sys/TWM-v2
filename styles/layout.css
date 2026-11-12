@@ -1,0 +1,196 @@
+/*
+  TWM V2 — Layout, Dock, Adaptive Hybrid Stage (Phase 1/2)
+  Breakpoints: phone <768px, tablet 768-1023px, desktop >=1024px
+  (01_DECISION_REGISTER.md section H, confirmed 2026-11-11).
+  No permanent sidebar anywhere — 01_DECISION_REGISTER.md section A.
+*/
+
+#twm-app {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Identity / context header ---------- */
+.twm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--twm-space-4);
+  padding: var(--twm-space-4) var(--twm-space-6);
+  padding-top: calc(var(--twm-space-4) + env(safe-area-inset-top));
+}
+.twm-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--twm-space-3);
+  font-weight: var(--twm-fw-bold);
+  font-size: var(--twm-fs-body-lg);
+  letter-spacing: 0.02em;
+}
+.twm-header__role-chip {
+  font-size: var(--twm-fs-caption);
+  color: var(--twm-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.twm-header__actions { display: flex; align-items: center; gap: var(--twm-space-3); }
+
+/* Admin-only breadcrumb strip — supplementary layer, not a nav mechanism replacement */
+.twm-breadcrumbs {
+  display: flex;
+  gap: var(--twm-space-2);
+  padding: 0 var(--twm-space-6);
+  font-size: var(--twm-fs-caption);
+  color: var(--twm-text-muted);
+}
+.twm-breadcrumbs span:last-child { color: var(--twm-text-secondary); }
+
+/* ---------- Adaptive Hybrid Stage ---------- */
+.twm-stage {
+  position: relative;
+  padding: 0 var(--twm-space-6) var(--twm-space-6);
+}
+.twm-stage__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--twm-space-5);
+  transition: opacity var(--twm-motion-base) var(--twm-ease-standard);
+}
+/* Focus mode: non-selected panels dim to the locked 20% opacity token */
+.twm-stage--focus .twm-stage__panel:not(.twm-stage__panel--focused) {
+  opacity: var(--twm-stage-focus-dim-opacity);
+  pointer-events: none;
+}
+.twm-stage__panel--focused {
+  grid-column: 1 / -1;
+}
+/* Immersive mode: single panel takes the full stage, dock minimizes (handled in dock.js) */
+.twm-stage--immersive .twm-stage__grid {
+  grid-template-columns: 1fr;
+}
+.twm-stage--immersive .twm-stage__panel:not(.twm-stage__panel--immersive) {
+  display: none;
+}
+
+.twm-stage__panel {
+  min-height: 120px;
+}
+
+/* ---------- Floating Command Dock ---------- */
+.twm-dock {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--twm-space-5) + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--twm-space-1);
+  padding: var(--twm-space-2);
+  z-index: 40;
+  transition: transform var(--twm-motion-slow) var(--twm-ease-standard),
+              opacity var(--twm-motion-slow) var(--twm-ease-standard);
+}
+/* Dock minimizes during Immersive mode — never fully removed, per locked rule */
+.twm-dock--minimized {
+  transform: translateX(-50%) translateY(72px) scale(0.92);
+  opacity: 0.35;
+}
+.twm-dock__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: var(--twm-touch-target-min);
+  min-height: var(--twm-touch-target-min);
+  padding: var(--twm-space-2) var(--twm-space-3);
+  border-radius: var(--twm-radius-md);
+  border: none;
+  background: transparent;
+  color: var(--twm-text-secondary);
+  font-size: 10px;
+  font-weight: var(--twm-fw-medium);
+  cursor: pointer;
+}
+.twm-dock__item[aria-current="true"] {
+  background: rgba(255,255,255,0.1);
+  color: var(--twm-text-primary);
+}
+.twm-dock__item[aria-current="true"] .twm-dock__dot { opacity: 1; }
+.twm-dock__dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--twm-role-accent, var(--twm-accent-cyan));
+  opacity: 0;
+}
+
+/* ---------- AI Companion / Copilot floating entry point (not a dock destination) ---------- */
+.twm-ai-fab {
+  position: fixed;
+  right: var(--twm-space-5);
+  bottom: calc(110px + env(safe-area-inset-bottom));
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--twm-border-glass-strong);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 41;
+  cursor: pointer;
+}
+
+/* ---------- Command palette (Admin-only supplementary layer) ---------- */
+.twm-cmdk-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(5,8,14,0.6);
+  z-index: 60;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+}
+.twm-cmdk {
+  width: min(560px, 90vw);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ---------- Responsive tiers ---------- */
+/* Phone (<768px): landscape-first, portrait adaptive via orientation query (not a width breakpoint) */
+@media (max-width: 767px) {
+  .twm-stage__grid { grid-template-columns: 1fr; }
+  .twm-header { padding: var(--twm-space-3) var(--twm-space-4); }
+}
+@media (max-width: 767px) and (orientation: landscape) {
+  .twm-stage__grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+
+/* Tablet 768-1023px: multi-zone workspace */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .twm-stage__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Desktop >=1024px: broader stage + contextual panels */
+@media (min-width: 1024px) {
+  .twm-stage__grid { grid-template-columns: repeat(3, 1fr); }
+  .twm-stage { padding: 0 var(--twm-space-10) var(--twm-space-8); max-width: 1440px; margin: 0 auto; }
+}
+
+/* Kanban-style stage-column views (CRM Leads, Applications, Applications Review, Compliance):
+   these are the screens flagged in 01_DECISION_REGISTER.md section H as genuinely restructuring
+   across tiers, not just reflowing. */
+.twm-kanban {
+  display: flex;
+  gap: var(--twm-space-4);
+  overflow-x: auto;
+  padding-bottom: var(--twm-space-2);
+}
+.twm-kanban__column {
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--twm-space-3);
+}
+@media (min-width: 768px) {
+  .twm-kanban { overflow-x: visible; }
+  .twm-kanban__column { flex: 1 1 0; }
+}

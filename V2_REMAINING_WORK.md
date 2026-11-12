@@ -1,0 +1,54 @@
+# V2 Remaining Work — Prioritized
+
+Derived from every NOT IMPLEMENTED, PARTIAL, and NOT CONNECTED finding across all six phase audits, plus the three cross-cutting bugs (H-1, H-2, H-3). Organized by priority, not by phase — fixing a Priority 0/1 item in several cases resolves multiple individual findings at once (noted inline). This is a punch list, not an implementation plan; no code changes were made as part of producing it.
+
+## Priority 0 — Correctness bugs (not missing features; the mechanism is built and behaves wrong)
+
+1. **Fix H-1: stale `focusState` is not reset on any navigation path except the Dock's own click handler.** [app.js:86-90](scripts/app.js#L86-L90),[117-124](scripts/app.js#L117-L124). Two candidate fixes identified during the audit (not applied, per audit-only scope): reset `focusState` at the top of `renderRoute` whenever `activeDestination` changes from its previous value, or move the reset into `TwmRouter.navigate` itself so every navigation path resets it uniformly. This single fix resolves: the Admin ⌘K navigation break, the ordinary-usage SMC-connect-then-navigate break, the Command Centre tile-click break, and the generic back/forward break — four of the five reproduction paths documented in Phase 2/6.
+2. **Fix the event-bubbling sub-case of H-1 specifically** — add `event.stopPropagation()` to `wireConnectButtons()`'s nested button handler in [client.js](scripts/content/client.js), or add an `event.target === panelEl` guard to the panel-level click listener in [stage.js:43](scripts/stage.js#L43). This is the single most severe reproduction path because it is triggered by completely ordinary use (connect SMC account, then switch tabs), not a contrived sequence. Should be fixed together with #1 since both touch the same code paths.
+3. **Fix Admin's phone-width dock overflow (P6-12).** [layout.css:82-99](styles/layout.css#L82-L99) — `.twm-dock` has no `overflow-x`, `flex-wrap`, or item-shrink rule, and is centered via `transform: translateX(-50%)`, so a 6-item dock (Admin) overflows a 375px viewport on both edges while 5-item docks (Client/Employee) don't. Candidate fixes: allow the dock to shrink item padding/font-size below a breakpoint, allow horizontal scroll within the dock container, or reduce visible labels to icons-only below a width threshold.
+
+## Priority 1 — Architectural gaps named identically across all three roles (fix once, resolves N findings)
+
+4. **Build the "Fully Customizable (Option C)" personalisation system** — drag-to-reposition, resize-within-bounds, show/hide widgets, save/restore layout presets, one-click restore-default. Zero implementation exists anywhere (`grep -rni "draggable|drag|resize|sortable"` returns one text-string false positive, repo-wide). This single gap is independently named as a requirement at least 10 times across Client (P3-13/22/38/48), Employee (P4-24), and Admin (P5-28) — building it once as a shared mechanism in the shell (not per-role) would resolve all of these simultaneously, consistent with it being specified in `03_SHARED_FRONTEND_ARCHITECTURE.md` as an app-wide decision, not a per-role one.
+5. **Build a chart/data-visualization primitive** (named Phase 1 deliverable, P1-21, zero implementation — no canvas/SVG/chart code anywhere). This single gap is what blocks: Markets Focus mode (P3-20), Markets Immersive mode content (P3-21), and Sales & CRM's pipeline visualization (P5-36). Building one shared chart component would unblock all three.
+6. **Resolve H-2: give Client screens a real path to Immersive mode.** No Client code ever calls `TwmRouter.navigate()` with a 3rd argument — contrast Employee's More hub ([employee.js:103](scripts/content/employee.js#L103)) and Admin's Command Centre/More hub ([admin.js:39,160](scripts/content/admin.js#L39)), which do. Either add an explicit "expand to full view" affordance to each Client panel's Focus-mode render that calls the 3-argument navigate, or get an explicit product decision that Immersive is intentionally an Employee/Admin-only pattern (the spec as written describes Immersive for Markets/Trade/Services/Me too, so this currently reads as an unintentional gap, not a decision). Resolves P3-21, P3-32, P3-44, and the Me-immersive-flows line all at once.
+7. **Wire up the "visually-present, functionally-inert" controls** — Admin's 36 Integration buttons (Connect/Test/Health/Rotate × 9 services, [admin.js:121-130](scripts/content/admin.js#L121-L130)), Admin's 3 Applications Review action chips ([admin.js:90-94](scripts/content/admin.js#L90-L94)), and Employee's 4 Applications filter chips ([employee.js:68](scripts/content/employee.js#L68)). Even stubbed/mock behavior (e.g., Connect → toggles the masked-key display to "connected," Filter chip → actually filters the static kanban) would convert these from NOT CONNECTED to WORKING without requiring the real backend integration they ultimately need.
+
+## Priority 2 — Individual-record data model (blocks a large cluster of Focus/Immersive requirements in Employee)
+
+8. **Introduce an individual Lead/Customer/Application/Task record concept.** Every CRM/Applications/Tasks Focus-mode requirement that says "selecting a lead/customer/application/task expands its detail" (P4-25, P4-27, P4-29) is NOT IMPLEMENTED for the same root reason: there is no list of individual, selectable records anywhere in the data model — only panel-level categories. This also blocks CRM's Converted/Lost record-creation requirement (P4-23) and Calling's "launched from inside a record" requirement (P4-22). This is a genuine data-model decision (even mock/fixture data, honestly labelled as illustrative, would suffice for a frontend-only prototype) — currently the honesty rule is honored (no fake records exist) but at the cost of these Focus requirements having nothing to operate on.
+
+## Priority 3 — Per-screen, lower-blast-radius gaps (one screen each, no shared cause)
+
+9. Client Home: build the Hero/Journey Map/Branching-journey interaction (P3-01/02/03) and the expandable floating market panel (P3-05) — currently a single static panel with inert chips.
+10. Client Trade: build the F&O payoff simulator panel (P3-27) — one of five named Practice-mode panel types, currently entirely absent.
+11. Client Me: build the Consents & Data Rights ledger + DPDP export/erase/delete-account action buttons + AI-memory controls (P3-53), Notification preference toggles (P3-54), Support Ticket list + create-new (P3-55), and finish the KYC Vault reveal-on-demand control (P3-51) and Delete Account trigger button (P3-56) — all currently single-sentence placeholders.
+12. Client Markets/Home: build a Signals feature with "Trade this" deep-link (P3-62) — spec only documents where Signals must *not* live (Trade), never builds where it should.
+13. Client Home/Services: wire the 4 quick-action tiles (P3-04) and the Invest/Protect/Borrow discovery deep-link into Services (P3-08) — both render correctly but have zero click handlers.
+14. Client: add a Disconnect control for `smcConnected` (H-3) — only Connect exists anywhere in the app; once connected, there is no way back to the not-connected state through the UI.
+15. Employee: build the Calling in-context action (one-tap call, WhatsApp template, note-taking) with auto-attach to the record (P4-22) — entirely absent, though explicitly named in the Employee spec's Leads section.
+16. Admin Team: build the Employees onboarding/offboarding/session-revoke/performance/call-recording-review workflow (P5-33) and the Allocation Engine's bulk-reassign + editable-rules UI (P5-34) — currently single-sentence placeholders and static method-name chips respectively.
+17. Admin Sales & CRM: build org-wide lead/customer oversight (P5-35, also blocked by item #8's record-model gap) and the sales-pipeline visualization (P5-36, also blocked by item #5's chart gap).
+18. Admin Command Centre: either implement the in-place Focus-mode tile expansion the spec separately describes (dim rest of stage to 20%, P5-29) alongside the already-working deep-link behavior, or confirm with the product owner that deep-link-only is the intended final behavior (currently silent on which is correct — the tiles call `TwmRouter.navigate()` directly rather than `TwmSetFocus()`, which is a deliberate-looking code choice that happens to skip the spec's other described behavior).
+19. Admin/Employee More hubs: give each More-hub sub-destination its own real Overview/Focus/Immersive structure (P4-21, P5-31) instead of one flat always-Immersive panel per tile — currently the hub-to-tile *navigation* works, but lands directly in a dead-end detail view with no further structure.
+20. Admin ⌘K: wire the palette's text input to actually filter the destination list by keystroke (P6-11) — currently decorative; only clicking a listed button works.
+21. Admin Signals Desk: build the actual RA publish-gating toggle switch (P5-32) — currently described in a sentence, no control exists.
+22. Client Services: add a distinct hero element separate from the category panels (P3-39) to match the spec's "hero *followed by* categories" architecture, rather than letting the categories stand in for the hero.
+23. Client Services: add loading and error states to at least one category/My-Applications panel (P3-47) — only the no-data-yet state is ever demonstrated anywhere in Client, despite loading/error being named requirements and the CSS for both already existing and working (confirmed in Phase 1).
+
+## Explicitly open product decisions (not engineering work — owner input needed before these can be built)
+
+These are correctly left unbuilt per the spec package's own disclosure, not defects:
+- Employee role-permission detail (which actions are available to which employee sub-roles)
+- Employee Performance KPI definitions (destination is locked; metrics are not)
+- Employee Calling/Internal Chat interaction details beyond the locked in-context placement
+- Admin role/permission-set for Applications Review and Compliance approval actions
+- Admin System Health metric definitions
+- Admin "View as" persona switch (explicitly stated as "not part of the locked baseline; not designed in this round")
+- Light-theme palette (spec itself makes this conditional: "only if the design flow supports it")
+
+## Device/accessibility verification still needed (not a code gap — a test-coverage gap)
+
+- Real mobile/notched-device or simulator test of the Dock's safe-area handling (P2-15) — currently only structurally confirmed via CSS, never device-tested.
+- Full keyboard-Tab-traversal accessibility sweep across all interactive elements on all 24 destinations (P2-16) — `:focus-visible` CSS rules exist and are correct in isolation, but no end-to-end traversal test has been built yet.

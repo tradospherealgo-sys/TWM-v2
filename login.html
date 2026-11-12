@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TWM V2 — Entry</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/foundation.css">
+<style>
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .twm-login-card { width: min(380px, 90vw); text-align: center; }
+  .twm-login-brand { font-size: var(--twm-fs-title-lg); font-weight: var(--twm-fw-bold); margin-bottom: var(--twm-space-2); }
+  .twm-login-sub { color: var(--twm-text-secondary); font-size: var(--twm-fs-body-sm); margin-bottom: var(--twm-space-8); }
+  .twm-login-form { display: flex; flex-direction: column; gap: var(--twm-space-3); margin-bottom: var(--twm-space-5); }
+  .twm-login-note { font-size: var(--twm-fs-caption); color: var(--twm-text-muted); }
+</style>
+</head>
+<body>
+  <div class="twm-login-card twm-glass twm-panel">
+    <div class="twm-login-brand">TWM</div>
+    <div class="twm-login-sub">Sign in to continue — entry concept, no real authentication in this frontend-only prototype.</div>
+    <form class="twm-login-form" onsubmit="event.preventDefault(); window.location.href='index.html#/client/home';">
+      <input class="twm-input" type="text" placeholder="Phone number or email" required>
+      <input class="twm-input" type="password" placeholder="Password" required>
+      <button class="twm-btn twm-btn--primary" type="submit" style="margin-top:4px">Continue</button>
+    </form>
+    <div class="twm-login-note">
+      This screen is a frontend concept only. Real authentication, session handling and role resolution are backend concerns, out of scope for this phase (see <code>07_FRONTEND_TECHNICAL_SPEC.md</code>).
+    </div>
+  </div>
+</body>
+</html>
