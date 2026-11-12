@@ -75,7 +75,7 @@ const TwmStage = (() => {
       (mode === 'focus' ? 'twm-stage--focus' : mode === 'immersive' ? 'twm-stage--immersive' : '');
     stageEl.innerHTML = '';
 
-    const customizable = mode === 'overview' && !!layoutKey;
+    const customizable = mode === 'overview' && !!layoutKey && (!routeContext || routeContext.customizable !== false);
     const layout = customizable ? loadLayout(layoutKey) : null;
     const visiblePanels = customizable ? applyLayout(panels, layout) : panels;
     const hiddenCount = customizable && layout ? (layout.hidden || []).filter((id) => panels.some((p) => p.id === id)).length : 0;

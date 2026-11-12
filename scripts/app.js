@@ -129,7 +129,7 @@
 
     const mode = route.panel ? 'immersive' : focusState.mode;
     const focusedId = route.panel || focusState.focusedId;
-    TwmStage.render(stageEl, panels, mode, focusedId, { role: route.role, destination: activeDestination });
+    TwmStage.render(stageEl, panels, mode, focusedId, { role: route.role, destination: activeDestination, customizable: screen ? screen.customizable : undefined });
 
     TwmDock.render(dockEl, route.role, activeDestination, (destId) => {
       focusState = { mode: 'overview', focusedId: null };

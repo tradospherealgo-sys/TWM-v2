@@ -500,7 +500,9 @@ window.TwmClientContent = (function () {
     ];
     panels.push({ id: 'me-applications-shortcut', title: 'My Applications', render: (el) => { el.innerHTML = `<div class="twm-state-empty">Shortcut only — deep-links to Services → My Applications. No second tracker here.</div>`; }, onFocus: () => goTo('client', 'services', 'my-applications') });
     panels.push(deleteAccountPanel());
-    return { title: 'Me', breadcrumb: ['Client', 'Me'], panels };
+    // Me is a documented, deliberate exception to Option C personalisation
+    // (04_CLIENT_INTERFACE.md) — every panel here is fixed chrome.
+    return { title: 'Me', breadcrumb: ['Client', 'Me'], panels, customizable: false };
   }
 
   function getScreen(destinationId, panelId) {
