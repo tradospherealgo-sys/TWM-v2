@@ -144,9 +144,10 @@
       <div class="twm-cmdk twm-glass twm-panel">
         <div class="twm-panel__title">Admin command palette</div>
         <input class="twm-input" placeholder="Jump to a destination…" autofocus>
-        <div style="margin-top:12px; display:flex; flex-direction:column; gap:4px;">
-          ${TwmDock.destinations.admin.map(d => `<button class="twm-btn twm-btn--secondary" data-dest="${d.id}" style="justify-content:flex-start">${d.label}</button>`).join('')}
+        <div class="twm-cmdk__list" style="margin-top:12px; display:flex; flex-direction:column; gap:4px;">
+          ${TwmDock.destinations.admin.map(d => `<button class="twm-btn twm-btn--secondary" data-dest="${d.id}" data-label="${d.label.toLowerCase()}" style="justify-content:flex-start">${d.label}</button>`).join('')}
         </div>
+        <div class="twm-cmdk__no-match twm-state-empty" style="display:none">No destination matches that search.</div>
         <p style="font-size:12px;color:var(--twm-text-muted);margin-top:12px">
           Supplementary power-user layer on top of the Dock — routes only to destinations the current role can reach.
         </p>
@@ -158,8 +159,29 @@
         backdrop.remove();
       });
     });
+    const input = backdrop.querySelector('input');
+    const buttons = Array.from(backdrop.querySelectorAll('[data-dest]'));
+    const noMatch = backdrop.querySelector('.twm-cmdk__no-match');
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      let visibleCount = 0;
+      buttons.forEach((btn) => {
+        const match = !q || btn.dataset.label.includes(q);
+        btn.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+      noMatch.style.display = visibleCount === 0 ? '' : 'none';
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const firstVisible = buttons.find((btn) => btn.style.display !== 'none');
+        if (firstVisible) firstVisible.click();
+      } else if (e.key === 'Escape') {
+        backdrop.remove();
+      }
+    });
     document.body.appendChild(backdrop);
-    backdrop.querySelector('input').focus();
+    input.focus();
   }
 
   document.addEventListener('keydown', (e) => {

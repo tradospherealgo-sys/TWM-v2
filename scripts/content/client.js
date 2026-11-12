@@ -36,7 +36,7 @@ window.TwmClientContent = (function () {
   // and "Me > Delete Account" (same underlying request flow, per spec).
   const dpdpRequests = JSON.parse(localStorage.getItem('twm-dpdp-requests') || '[]');
   function fileDpdpRequest(kind) {
-    dpdpRequests.push({ kind, status: 'Submitted — under review', ts: new Date().toISOString() });
+    dpdpRequests.push({ id: 'dpdp' + Date.now(), kind, status: 'Submitted — under review', stage: 'Requested', ts: new Date().toISOString() });
     localStorage.setItem('twm-dpdp-requests', JSON.stringify(dpdpRequests));
     window.TwmForceRender();
   }
