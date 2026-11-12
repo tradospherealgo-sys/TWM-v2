@@ -125,17 +125,52 @@ window.TwmAdminContent = (function () {
   }
 
   // ---------------- Team ----------------
+  // Performance is derived live from the shared record-ownership field (employeeId) on
+  // leads/customers, and from the shared activity log — never a fabricated score or target.
+  function employeePerformance(employeeId) {
+    const ls = leads().filter(l => l.employeeId === employeeId);
+    const cs = customers().filter(c => c.employeeId === employeeId);
+    const convertedCount = ls.filter(l => l.stage === 'Converted').length;
+    const lostCount = ls.filter(l => l.stage === 'Lost').length;
+    const openCount = ls.length - convertedCount - lostCount;
+    const log = activityLog();
+    let callsLogged = 0;
+    Object.keys(log).forEach((key) => {
+      const [type, id] = key.split(':');
+      const owned = (type === 'lead' && ls.some(l => l.id === id)) || (type === 'customer' && cs.some(c => c.id === id));
+      if (owned) log[key].forEach(entry => { if (entry.text === 'One-tap call placed') callsLogged++; });
+    });
+    return { leadCount: ls.length, openCount, convertedCount, lostCount, customerCount: cs.length, callsLogged };
+  }
+
+  let performanceOpenFor = null; // employee id currently showing the performance detail panel
+  let reassignStatusMessage = ''; // must survive the window.TwmForceRender() re-render below, so it's module state, not a one-off textContent write
+
   function employeesBody(el) {
     const emps = getEmployees();
     el.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">
-      ${emps.map(e => `<div class="twm-glass" style="padding:10px;border-radius:var(--twm-radius-sm);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-        <div><div>${e.name}</div><div style="font-size:12px;color:var(--twm-text-muted)">${e.role} · ${e.active ? 'Active' : 'Offboarded'}</div></div>
-        <div style="display:flex;gap:6px">
-          <button class="twm-btn twm-btn--secondary" data-emp="${e.id}" data-act="toggle" style="padding:4px 10px;font-size:12px">${e.active ? 'Offboard' : 'Re-onboard'}</button>
-          <button class="twm-btn twm-btn--secondary" data-emp="${e.id}" data-act="revoke" style="padding:4px 10px;font-size:12px" ${e.active ? '' : 'disabled'}>Revoke Sessions</button>
+      ${emps.map(e => {
+        const perf = performanceOpenFor === e.id ? employeePerformance(e.id) : null;
+        return `<div class="twm-glass" style="padding:10px;border-radius:var(--twm-radius-sm);display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div><div>${e.name}</div><div style="font-size:12px;color:var(--twm-text-muted)">${e.role} · ${e.active ? 'Active' : 'Offboarded'}</div></div>
+          <div style="display:flex;gap:6px">
+            <button class="twm-btn twm-btn--secondary" data-emp="${e.id}" data-act="perf" style="padding:4px 10px;font-size:12px">${performanceOpenFor === e.id ? 'Hide Performance' : 'View Performance'}</button>
+            <button class="twm-btn twm-btn--secondary" data-emp="${e.id}" data-act="toggle" style="padding:4px 10px;font-size:12px">${e.active ? 'Offboard' : 'Re-onboard'}</button>
+            <button class="twm-btn twm-btn--secondary" data-emp="${e.id}" data-act="revoke" style="padding:4px 10px;font-size:12px" ${e.active ? '' : 'disabled'}>Revoke Sessions</button>
+          </div>
         </div>
-      </div>`).join('')}
-      <div class="twm-state-empty" style="margin-top:4px">Performance and call-recording review need a per-employee record-ownership field not yet in the data model — not implemented, to avoid fabricating attribution.</div>
+        ${perf ? `<div style="display:flex;gap:16px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--twm-border-glass)">
+          <div><div class="twm-num" style="font-size:16px">${perf.leadCount}</div><div style="font-size:11px;color:var(--twm-text-muted)">Leads owned</div></div>
+          <div><div class="twm-num" style="font-size:16px">${perf.openCount}</div><div style="font-size:11px;color:var(--twm-text-muted)">Open</div></div>
+          <div><div class="twm-num" style="font-size:16px">${perf.convertedCount}</div><div style="font-size:11px;color:var(--twm-text-muted)">Converted</div></div>
+          <div><div class="twm-num" style="font-size:16px">${perf.lostCount}</div><div style="font-size:11px;color:var(--twm-text-muted)">Lost</div></div>
+          <div><div class="twm-num" style="font-size:16px">${perf.customerCount}</div><div style="font-size:11px;color:var(--twm-text-muted)">Customers</div></div>
+          <div><div class="twm-num" style="font-size:16px">${perf.callsLogged}</div><div style="font-size:11px;color:var(--twm-text-muted)">One-tap calls logged</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--twm-text-muted)">Derived live from the shared CRM/activity data via record-ownership (employeeId) — not a fabricated score. Exact KPI target definitions remain an open decision. Call-recording review is not shown: no real audio/telephony data exists in this prototype.</p>` : ''}
+      </div>`;
+      }).join('')}
       <div id="emp-status" style="font-size:12px;color:var(--twm-text-muted)"></div>
     </div>`;
     const status = el.querySelector('#emp-status');
@@ -150,6 +185,9 @@ window.TwmAdminContent = (function () {
           window.TwmForceRender();
         } else if (btn.dataset.act === 'revoke') {
           status.textContent = `All active sessions revoked for ${rec.name} (prototype — no real session store).`;
+        } else if (btn.dataset.act === 'perf') {
+          performanceOpenFor = performanceOpenFor === btn.dataset.emp ? null : btn.dataset.emp;
+          window.TwmForceRender();
         }
       });
     });
@@ -157,6 +195,8 @@ window.TwmAdminContent = (function () {
 
   function allocationEngineBody(el) {
     const rules = getAllocationRules();
+    const ls = leads();
+    const emps = getEmployees().filter(e => e.active);
     el.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">${ALLOCATION_METHODS.map(x => `<span class="twm-chip">${x}</span>`).join('')}</div>
       ${rules.length === 0 ? `<div class="twm-state-empty">No assignment rules configured yet.</div>` : `<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
         ${rules.map(r => `<div class="twm-glass" style="padding:8px;border-radius:var(--twm-radius-sm);display:flex;justify-content:space-between;align-items:center">
@@ -169,7 +209,22 @@ window.TwmAdminContent = (function () {
         <input class="twm-input" id="rule-product" placeholder="Product (e.g. Demat)">
         <button class="twm-btn twm-btn--primary" id="rule-add">Add Rule</button>
       </div>
-      <div class="twm-state-empty" style="margin-top:10px">Bulk re-assign is not wired to live leads — the lead record has no owner/employee-id field yet, so reassignment would have nothing real to change.</div>`;
+
+      <div class="twm-panel__title" style="font-size:13px;margin-top:16px">Bulk Re-assign Leads</div>
+      ${ls.length === 0 ? `<div class="twm-state-empty">No leads to reassign.</div>` : `<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;max-height:220px;overflow:auto">
+        ${ls.map(l => `<label style="display:flex;align-items:center;gap:8px;font-size:13px">
+          <input type="checkbox" data-reassign-lead="${l.id}">
+          ${l.name} <span class="twm-chip" style="margin-left:auto">${l.employeeId ? (emps.find(e => e.id === l.employeeId) || {}).name || 'Unassigned' : 'Unassigned'}</span>
+        </label>`).join('')}
+      </div>`}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select class="twm-input" id="reassign-target">
+          <option value="">Assign to…</option>
+          ${emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('')}
+        </select>
+        <button class="twm-btn twm-btn--primary" id="reassign-apply" ${emps.length === 0 || ls.length === 0 ? 'disabled' : ''}>Reassign Selected</button>
+      </div>
+      <div id="reassign-status" style="font-size:12px;color:var(--twm-text-muted);margin-top:6px">${reassignStatusMessage}</div>`;
     el.querySelector('#rule-add').addEventListener('click', () => {
       const method = el.querySelector('#rule-method').value;
       const product = el.querySelector('#rule-product').value.trim();
@@ -185,6 +240,24 @@ window.TwmAdminContent = (function () {
         window.TwmForceRender();
       });
     });
+    const reassignBtn = el.querySelector('#reassign-apply');
+    if (reassignBtn) reassignBtn.addEventListener('click', () => {
+      const targetId = el.querySelector('#reassign-target').value;
+      const selectedIds = Array.from(el.querySelectorAll('[data-reassign-lead]:checked')).map(cb => cb.dataset.reassignLead);
+      if (!targetId || selectedIds.length === 0) {
+        reassignStatusMessage = 'Select at least one lead and a target employee.';
+        window.TwmForceRender();
+        return;
+      }
+      const allLeads = leads();
+      selectedIds.forEach(id => {
+        const lead = allLeads.find(l => l.id === id);
+        if (lead) lead.employeeId = targetId;
+      });
+      save('twm-leads', allLeads);
+      reassignStatusMessage = `${selectedIds.length} lead${selectedIds.length > 1 ? 's' : ''} reassigned.`;
+      window.TwmForceRender();
+    });
   }
 
   function teamScreen() {
@@ -199,15 +272,17 @@ window.TwmAdminContent = (function () {
   // ---------------- Sales & CRM ----------------
   function orgCrmBody(el) {
     const ls = leads(), cs = customers();
+    const emps = getEmployees();
+    const ownerName = (employeeId) => employeeId ? ((emps.find(e => e.id === employeeId) || {}).name || 'Unassigned') : 'Unassigned';
     el.innerHTML = `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">
         <div><div class="twm-num" style="font-size:20px">${ls.length}</div><div style="font-size:12px;color:var(--twm-text-muted)">Open leads</div></div>
         <div><div class="twm-num" style="font-size:20px">${cs.length}</div><div style="font-size:12px;color:var(--twm-text-muted)">Customers</div></div>
       </div>
       ${ls.length === 0 && cs.length === 0 ? `<div class="twm-state-empty">No leads or customers across employees yet.</div>` : `<div style="display:flex;flex-direction:column;gap:6px">
-        ${ls.map(l => `<div class="twm-glass" style="padding:8px;border-radius:var(--twm-radius-sm);font-size:13px;display:flex;justify-content:space-between"><span>${l.name}</span><span class="twm-chip">${l.stage}</span></div>`).join('')}
-        ${cs.map(c => `<div class="twm-glass" style="padding:8px;border-radius:var(--twm-radius-sm);font-size:13px;display:flex;justify-content:space-between"><span>${c.name}</span><span class="twm-chip">Customer</span></div>`).join('')}
+        ${ls.map(l => `<div class="twm-glass" style="padding:8px;border-radius:var(--twm-radius-sm);font-size:13px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${l.name}</span><span style="display:flex;gap:6px"><span class="twm-chip">${l.stage}</span><span class="twm-chip" title="Owner">${ownerName(l.employeeId)}</span></span></div>`).join('')}
+        ${cs.map(c => `<div class="twm-glass" style="padding:8px;border-radius:var(--twm-radius-sm);font-size:13px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${c.name}</span><span style="display:flex;gap:6px"><span class="twm-chip">Customer</span><span class="twm-chip" title="Owner">${ownerName(c.employeeId)}</span></span></div>`).join('')}
       </div>`}
-      <p style="font-size:12px;color:var(--twm-text-muted);margin-top:8px">Read-only oversight — record detail and notes live in the Employee workspace.</p>`;
+      <p style="font-size:12px;color:var(--twm-text-muted);margin-top:8px">Read-only oversight — record detail and notes live in the Employee workspace. Owner reflects the employee record-ownership field, reassignable in Team ▸ Allocation Engine.</p>`;
   }
 
   function salesMonitoringBody(el) {
@@ -411,26 +486,49 @@ window.TwmAdminContent = (function () {
     el.innerHTML = `<div class="twm-state-empty">Module presence only. <span class="twm-badge twm-badge--pending-decision">Exact states/metric definitions — open decision</span></div>`;
   }
 
+  // ---------------- More hub: condensed previews for Overview/Focus tiers ----------------
+  // Full panels above render only once opened to Immersive (H-2 "Open full view"
+  // mechanism in stage.js) — Overview/Focus stay condensed, same pattern as Employee's hub.
+  function integrationsPreview(el) {
+    const map = getIntegrations();
+    const connectedCount = INTEGRATION_SERVICES.filter(s => map[s].connected).length;
+    el.innerHTML = `<div class="twm-num" style="font-size:20px">${connectedCount}/${INTEGRATION_SERVICES.length}</div><div class="twm-state-empty" style="padding:8px 0 0">services connected (prototype/mock) — open to manage.</div>`;
+  }
+  function signalsDeskPreview(el) {
+    const raGated = load('twm-signals-ra-gated', { on: true }).on;
+    el.innerHTML = `<span class="twm-chip twm-chip--warm">${raGated ? 'Shadow Mode ON' : 'Publish ENABLED'}</span><div class="twm-state-empty" style="padding:8px 0 0">open for the full 7-stage pipeline.</div>`;
+  }
+  function contentSopPreview(el) {
+    el.innerHTML = `<div class="twm-state-empty">No content yet — open to manage knowledge base and disclaimers.</div>`;
+  }
+  function systemHealthPreview(el) {
+    el.innerHTML = `<div class="twm-state-empty">Module presence only. <span class="twm-badge twm-badge--pending-decision">Metric definitions — open decision</span></div>`;
+  }
+
   function moreScreen(panelId) {
     const hubItems = [
-      { id: 'integrations', title: 'Integrations', render: integrationsPanel },
-      { id: 'signals-desk', title: 'Signals Desk', render: signalsDeskPanel },
-      { id: 'content-sop', title: 'Content and SOP', render: contentSopPanel },
-      { id: 'system-health', title: 'System Health', render: systemHealthPanel },
+      { id: 'integrations', title: 'Integrations', render: integrationsPanel, renderPreview: integrationsPreview },
+      { id: 'signals-desk', title: 'Signals Desk', render: signalsDeskPanel, renderPreview: signalsDeskPreview },
+      { id: 'content-sop', title: 'Content and SOP', render: contentSopPanel, renderPreview: contentSopPreview },
+      { id: 'system-health', title: 'System Health', render: systemHealthPanel, renderPreview: systemHealthPreview },
     ];
     if (panelId) {
+      // Immersive tier — full panel, reached only via the H-2 "Open full view" mechanism
+      // from a focused Overview/Focus tile, never rendered directly in Overview.
       const item = hubItems.find(h => h.id === panelId) || hubItems[0];
       return {
         title: item.title, breadcrumb: ['Admin', 'More', item.title],
         panels: [{ id: item.id, title: item.title, render: item.render }],
       };
     }
+    // Overview/Focus tier — condensed preview per tile; entering Focus (not a direct
+    // route jump) is what makes the H-2 "Open full view" button appear for the focused tile.
     return {
       title: 'More', breadcrumb: ['Admin', 'More'],
       panels: hubItems.map(h => ({
-        id: h.id, title: h.title,
-        render: h.render,
-        onFocus: () => { TwmRouter.navigate('admin', 'more', h.id); },
+        id: h.id, title: h.title, immersive: true,
+        render: h.renderPreview,
+        onFocus: () => window.TwmSetFocus('focus', h.id),
       })),
     };
   }

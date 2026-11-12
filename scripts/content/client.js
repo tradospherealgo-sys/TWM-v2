@@ -214,7 +214,16 @@ window.TwmClientContent = (function () {
         },
       },
       { id: 'movers', title: 'Market Movers', render: (el) => { el.innerHTML = `<div class="twm-state-empty">Top gainers/losers — public data.</div>`; } },
-      { id: 'news-ipo', title: 'News & IPO Highlights', render: (el) => { el.innerHTML = `<div class="twm-state-empty">Compact feed + IPO teaser cards.</div><p style="font-size:12px;color:var(--twm-text-muted);margin-top:8px">Apply flow lives in Home → Explore IPOs / Services, not duplicated here.</p>`; } },
+      {
+        id: 'news-ipo', title: 'News & IPO Highlights',
+        render: (el) => {
+          el.innerHTML = `<div class="twm-state-empty">Compact feed + IPO teaser cards.</div>
+          <p style="font-size:12px;color:var(--twm-text-muted);margin-top:8px">The IPO apply flow lives in Services, not duplicated here.</p>
+          <button class="twm-btn twm-btn--secondary" id="news-ipo-explore" style="margin-top:10px">Explore & apply for IPOs →</button>`;
+          const btn = el.querySelector('#news-ipo-explore');
+          if (btn) btn.addEventListener('click', (e) => { e.stopPropagation(); goTo('client', 'services', 'cat-invest'); });
+        },
+      },
       {
         id: 'signals', title: 'Signals',
         render: (el) => { el.innerHTML = `<div class="twm-state-empty">No signals published yet — Admin's Signals Desk is in Shadow Mode (internal scorecard only). Once a signal publishes, it appears here with a "Trade this" deep-link into Trade's Live mode.</div>`; },
@@ -354,6 +363,7 @@ window.TwmClientContent = (function () {
     const panels = categories.map(c => ({
       id: 'cat-' + c.group.toLowerCase(),
       title: c.group,
+      immersive: true,
       render: (el) => {
         el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px">${c.items.map(i => `<span class="twm-chip">${i}</span>`).join('')}</div>`;
         if (c.group === 'Borrow') {

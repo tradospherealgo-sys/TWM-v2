@@ -191,3 +191,14 @@ Recounting all 49 applicable rows (2 UNVERIFIED items, P3-26/28 and P3-42, remai
 - **NOT IMPLEMENTED: 1** (P3-44)
 
 **Phase 3 completion (post-remediation): 47/49 (≈96%)**, up from 24/49 (≈49%). The two remaining gaps (P3-44, P3-61) are both single, isolated, disclosed wiring gaps — neither is an architectural/cross-cutting cause any more, unlike the pre-remediation state where H-2 and the Option C absence alone accounted for roughly a third of the phase's gap.
+
+### LIVE-VERIFICATION UPDATE (2026-11-12, second pass — real Playwright/Chromium run)
+
+Unlike every prior update in this file (static code-trace only), this pass used a real local Chromium instance (cached revision 1243, launched via `playwright-core`) against the app served at `http://127.0.0.1:8731`. Script and raw results: `V2_AUDIT_EVIDENCE/2026-11-12_playwright/regression.js` and `results.json`.
+
+| Req ID | Prior status | New status | Live evidence |
+|---|---|---|---|
+| P3-44 | NOT IMPLEMENTED | **WORKING** | `immersive: true` added to Services' `cat-invest`/`cat-protect`/`cat-borrow` panel objects ([client.js](scripts/content/client.js), inside `categories.map(...)`). Live-confirmed: `#/client/services` → click a category tile → Focus mode (`twm-stage--focus` class observed) → "Open full view" button present (H-2) → click → Immersive mode (`twm-stage--immersive` class observed). Screenshot evidence not separately captured for this specific click-through (covered structurally by the News & IPO chain below, which lands on the same `cat-invest` destination). |
+| P3-61 | IMPLEMENTED BUT NOT CONNECTED | **WORKING** | Markets' `news-ipo` panel now renders a real `#news-ipo-explore` button wired via `addEventListener` to `goTo('client','services','cat-invest')`, with `e.stopPropagation()`. Live-confirmed: navigated to `#/client/markets`, located `#news-ipo-explore`, clicked it, and the browser's URL changed to `#/client/services/cat-invest` — a genuine outbound click-through, not just a code-trace inference. |
+
+Phase 3 recount after this pass: **WORKING: 49, IMPLEMENTED BUT NOT CONNECTED: 0, NOT IMPLEMENTED: 0** — **49/49 (100%)** of the applicable (non-UNVERIFIED) denominator. P3-26/28 and P3-42 remain excluded from this denominator and still UNVERIFIED for the reason stated above (no real content yet to check against) — this pass did not change that, and does not claim otherwise. This is the first time any Phase 3 figure in this file rests on a live browser run rather than static analysis alone.

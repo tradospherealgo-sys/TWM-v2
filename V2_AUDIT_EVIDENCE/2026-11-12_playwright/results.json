@@ -1,0 +1,243 @@
+{
+  "ranAt": "2026-11-12T10:13:15.893Z",
+  "total": 47,
+  "passed": 47,
+  "failed": 0,
+  "results": [
+    {
+      "name": "client/home renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client/markets renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client/trade renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client/services renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client/me renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client: no console errors across all destinations",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client: no page errors",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client: no failed network requests",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/myday renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/crm renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/applications renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/tasks renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/more renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee: no console errors across all destinations",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee: no page errors",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee: no failed network requests",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin/command-centre renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin/team renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin/sales-crm renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin/applications-review renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin/compliance renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin/more renders",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin: no console errors across all destinations",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin: no page errors",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "admin: no failed network requests",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "client/services overview shows category panels",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/crm shows at least one lead card",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/crm lead click enters Focus mode",
+      "pass": true,
+      "detail": "twm-stage__grid twm-stage twm-stage--focus"
+    },
+    {
+      "name": "employee/crm lead Focus shows \"Open full view\" (H-2)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "employee/crm lead reaches Immersive mode",
+      "pass": true,
+      "detail": "twm-stage__grid twm-stage twm-stage--immersive"
+    },
+    {
+      "name": "P4-23: Mark Lost shows reason-code select",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-23: lead stage becomes Lost with reason persisted",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-28: Applications Immersive shows review checklist",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-28: Applications Immersive shows document upload control",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P4-21: Employee More hub tile click enters Focus (not direct Immersive)",
+      "pass": true,
+      "detail": "twm-stage__grid twm-stage twm-stage--focus"
+    },
+    {
+      "name": "P4-21: Employee More hub Focus shows Open full view",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P5-31: Admin More hub tile click enters Focus (not direct Immersive)",
+      "pass": true,
+      "detail": "twm-stage__grid twm-stage twm-stage--focus"
+    },
+    {
+      "name": "P5-31: Admin More hub Focus shows Open full view",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P5-33: Admin Team View Performance shows derived KPI numbers",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "P5-34: bulk reassign applies and reports status",
+      "pass": true,
+      "detail": "1 lead reassigned."
+    },
+    {
+      "name": "P5-35: Sales & CRM shows owner attribution",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile: Admin dock visible at 390x844",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile: no console errors",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet: Admin dock visible at 834x1194",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "tablet: no console errors",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-landscape: Admin dock visible at 1440x900",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-landscape: no console errors",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}
