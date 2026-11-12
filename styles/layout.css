@@ -89,9 +89,14 @@
   gap: var(--twm-space-1);
   padding: var(--twm-space-2);
   z-index: 40;
+  max-width: calc(100vw - var(--twm-space-4));
+  overflow-x: auto;
+  scrollbar-width: none;
   transition: transform var(--twm-motion-slow) var(--twm-ease-standard),
               opacity var(--twm-motion-slow) var(--twm-ease-standard);
 }
+.twm-dock::-webkit-scrollbar { display: none; }
+.twm-dock__item { flex: 0 0 auto; }
 /* Dock minimizes during Immersive mode — never fully removed, per locked rule */
 .twm-dock--minimized {
   transform: translateX(-50%) translateY(72px) scale(0.92);
@@ -159,6 +164,20 @@
 @media (max-width: 767px) {
   .twm-stage__grid { grid-template-columns: 1fr; }
   .twm-header { padding: var(--twm-space-3) var(--twm-space-4); }
+  /* Admin's 6-item dock needs tighter chrome than Client/Employee's 5-item docks
+     to fit a 375px viewport without clipping (P6-12) — shrink first, scroll-fallback
+     from the base .twm-dock rule handles anything narrower still. */
+  .twm-dock__item {
+    padding: var(--twm-space-1) var(--twm-space-2);
+    font-size: 9px;
+    min-width: 0;
+  }
+  .twm-dock__item span:last-child {
+    max-width: 52px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 @media (max-width: 767px) and (orientation: landscape) {
   .twm-stage__grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }

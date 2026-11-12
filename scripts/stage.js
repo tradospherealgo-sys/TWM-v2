@@ -40,7 +40,13 @@ const TwmStage = (() => {
 
       if (panel.onFocus && mode === 'overview') {
         panelEl.style.cursor = 'pointer';
-        panelEl.addEventListener('click', () => panel.onFocus());
+        // H-1 event-bubbling sub-case: a click on any nested interactive control
+        // (e.g. "Connect SMC Account") bubbles up to this listener too. Ignore it
+        // here so only a click on the panel chrome itself enters Focus mode.
+        panelEl.addEventListener('click', (e) => {
+          if (e.target.closest('button, a, input, select, textarea, [role="button"], [role="tab"]')) return;
+          panel.onFocus();
+        });
       }
 
       if (panel.disclosure) {

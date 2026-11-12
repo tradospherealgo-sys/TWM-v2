@@ -93,6 +93,13 @@
   // without that state living in the router (it isn't a navigable destination).
   window.TwmForceRender = () => renderRoute(TwmRouter.parse());
 
+  // H-1 fix: focusState must reset on EVERY path that changes role/destination
+  // (direct hash edit, back/forward, ⌘K, More-hub deep-links, Command Centre tile
+  // clicks), not only the Dock's own click handler. Tracking the last rendered
+  // route key and comparing it here covers every path uniformly, because every
+  // path ends up calling renderRoute via TwmRouter.onChange or TwmSetFocus.
+  let lastRouteKey = null;
+
   function renderRoute(route) {
     const content = CONTENT[route.role];
     if (!content) return;
@@ -103,6 +110,12 @@
       TwmRouter.navigate(route.role, activeDestination);
       return;
     }
+
+    const routeKey = route.role + '/' + activeDestination;
+    if (routeKey !== lastRouteKey) {
+      focusState = { mode: 'overview', focusedId: null };
+    }
+    lastRouteKey = routeKey;
 
     const screen = content.getScreen(activeDestination, route.panel);
     renderHeader(route);
